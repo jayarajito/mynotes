@@ -1,0 +1,26 @@
+https://www.youtube.com/watch?v=0QhUhrWGB9k
+
+https://www.youtube.com/watch?v=AsXNDf5-cTs
+
+https://www.youtube.com/watch?v=lxc4EXZOOvE&t=95s
+
+Deployment Strategies:
+In deployment file you can specify the type under strategy
+
+type: RollingUPdate  
+Unabailable pods during the update.
+Pods created over desired size
+
+type: Recreate
+
+
+Blue Green Deployment, while update if goes anything wrong we can easily switch back the older version
+this switch all the traffic
+
+Canary Deployment
+In This we will switch samll percent of the traffic to new version, then gradually switch more
+
+Rolling Update:
+This is default stratgey
+
+1:39

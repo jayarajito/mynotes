@@ -1,0 +1,53 @@
+https://www.youtube.com/watch?v=FGJ5OeFItd4&list=PLrMP04WSdCjrkNYSFvFeiHrfpsSVDFMDR&index=18
+
+DaemonSets in Kubernetes
+
+Deployment and replicaset are used to ensure that a certain number of pods are always running 
+
+These pods may run on different nodes based on the affenity that we give
+
+
+We want to makesure certiain application/agent run on every nodes
+
+We can use affenity but if new nodes added so the dployment can not run/dploy the pods on that node also, We want to increase the replica and reapply
+
+
+Using Daemonsets we can deploy the pods in each node in the cluster
+
+Use Cases:
+deploy logging app-fluentd,logstash
+deploy monitoring app-prometheus, datadog
+deploy networking app-cilium,weave net
+
+kind: DaemonSet
+
+kubectl api-resources | grep daemonset
+
+kubectl get nodes
+
+minikube node add
+
+kubectl get pods -o wide
+
+If we delete the node the pod which is running on the node by daemonset will be garbge collected
+
+In Kubernetes, garbage collection (GC) is a process that cleans up unnecessary resources to keep the cluster healthy and efficient. 
+
+
+kubectl delete node nodename
+
+node-exporter port is 9100
+
+kubectl get ds -A
+
+by default kube-proxy ds created in the kube-system ns
+
+
+whenever delete the daemonset, the pods all are deleted managed by this
+
+kubectl delete ds node-exporter
+
+if you dont want to delete the pods that are managed by daemonset you can use --cascade
+
+kubectl delete ds node-exporter --cascade=false
+

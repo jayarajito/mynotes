@@ -1,0 +1,132 @@
+Stateless Applications:
+Stateless applications don't store any information about past requests. 
+Each request is processed independently, without regard for previous interactions.
+
+Examples: 
+Web servers, APIs, and front-end applications. 
+Applications that primarily handle simple transactions. 
+
+Stateful Applications:
+Stateful applications retain data across multiple requests. 
+They store information about past interactions to maintain context or provide a persistent state. 
+
+
+Examples:
+Databases (MySQL, PostgreSQL), key-value stores. 
+Applications that require data retention and synchronization. 
+
+
+https://www.youtube.com/watch?v=jyBDbm1FHiM
+
+https://github.com/pelthepu/Kubernetes
+
+AutoScalling in kubernets
+
+Scalling Automatically based on some metrics
+
+K8s Offer 3 Types of Autoscalers
+
+HPA-Horizontal Autoscaler -scale up or down
+-------------------------------------------
+
+Increase the pods replicas whenever the spike in cpu,memory or other metrics
+
+use kind as : HorizontalPodAutoscaler
+type: utiliztion
+
+In Worker node the Container advicer collect the metrics of the pods every 10s and send to the kubelet
+Kubelet sent to the Aggregate metrics to Metrics server
+Metrics Server expose the metrics to the API Server every 1minutes
+
+HPA Controller will get the metrics every 15 s
+This decide scale up or down as per metris
+HPA Controller only will update the replica count in the desired deployment
+Replication Controller will increae or decrese the pods
+
+
+kubectl apply -f deployment.yaml
+kubectl apply -f servcie.yaml
+kubectl apply -f hpa.yaml
+
+kubectl get pods
+
+Need to enable metrics server
+https://www.youtube.com/watch?v=MbgFIQoVh6w
+
+check the cpu and memory usage
+kubectl top pods  
+
+kubectl get hpa
+
+kubectl describe hpa name
+
+kubectl apply -f traffic-generator.yaml
+
+kubectl exec -it traffic-generator -- sh
+
+apk add wrk
+
+wrk -c 5 -t 5 -d 300s -H "Connection: Close" http://utility-api-service:8080/api/stress
+
+
+
+
+
+
+VPA-Vertical Autoscaler -scale up or down
+------------------------------------------
+
+Increase the resources for the existing pods
+
+use kind as : VerticalPodAutoscaler
+updatemOde: "Off" or Auto or Initial
+
+Off means- just give the recomedations and does not apply to the pod- this is best practice in production -this will restart. feed this recomkodation to graphan monitoring dashboard and apply next deployments cycle
+
+Auto means- apply the recomendations directly to the pods
+
+Initial means - apply the recommendation only new created pods
+
+kubectl apply -f vpa.yaml
+
+you will get the error
+
+bydfault vpa is not avilable in our cluster
+we need to install it 
+git clone https://github.com/kubernetes/autoscaler.git
+
+run this 
+vertical-pod-autoscaler/hack/vpa-up.sh
+ 
+
+
+kubectl apply -f vpa.yaml
+
+kubectl get vpa name
+
+kubectl describe vpa name
+
+Under Recommendations
+Lower Bound is a Request
+Upper Bound is a Limit
+
+
+
+CA-Cluster Autoscaler -scale up or down
+----------------------------------------
+
+Add the nodes if any pod stuck due to the lack of the cluster resources 
+
+if pod need 1 cpu but the cluster has only .5 cpu, that time the scheduler marks the pod to unscheduleable
+
+There is 3 options
+Free up resources
+Adding a node manually
+Let k8s handle the node automatically
+
+it checks for every 10 sec for any unscheduleable pods are avialble or not
+once deducted 1 or more pods, then this will deside how many nodes needs to up or down based on the algorithm
+For auto scalling this look only for unscheeuled pods not for cpu.memory metrics
+
+
+https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/README.md

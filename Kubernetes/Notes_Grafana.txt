@@ -1,0 +1,340 @@
+https://www.youtube.com/watch?v=P1E1j6KSePw&list=PLrMP04WSdCjqinVQqbW4j3phsN8oiqjJw
+
+Video 1:
+---------
+Introduction Grafana:
+----------------------
+In grafana we can query and visualize the data in beatuiful dashboards
+
+this is completely open source
+
+used to monitor application performance
+
+support multiple data sources like prometheus,mysql, grafana loki
+
+Loki is a log aggregation system designed to store and query logs from all your applications and infrastructure
+
+We can set Alerting also like teams,slack,email
+
+Grafana allows user management
+
+Prometheus supports basic authentication and TLS and Reverse Proxies.
+
+It support Annotation
+
+It support dynamic dashboards through templating and Variables
+
+ 
+Prometheus vs Grafana:
+----------------------
+
+Prometheus Collect and Stores the data
+Grafana Relies on data sources and does not store the data
+Prometheus has limited Visualization, it focous on collect the data
+Grafana has Variety of options in visualization
+Prometheus support advanced alerting sytem
+Grafana has the limited alerting 
+
+
+Video2
+--------
+Grafana Instalation
+-------------------
+
+best practice is create a new name space
+
+kubectl create ns monitoring
+
+helm repo add grafana url
+
+list the repo to verify
+
+helm repo list
+
+helm install releasename grafana/grafana --namespace monitoring
+
+kubectl get pods -n moni
+kubectl get svc -n moni
+kubectl port-forward svc/svcname hostport:svcport -n monitoring
+
+Video3:
+--------
+Grafana Datasources
+--------------------
+
+Source of the data is defined as Datasources
+Datasources are external location where the data is stored and grafana relies on these data source
+Grafana does not store the data itself
+simply establish the connection b/w grafana and datasources to analyse and monitor the data
+
+go to grafana UI
+Connections
+Add New Connection
+select prometheus
+Add new data source
+give a name
+prometheus server url
+save and test
+then go to the data sources, you can see the data sources added
+
+Explore tab:
+-----------
+
+here you can select the datasource and query data
+
+In this editor there is 2 options Builder or Code
+
+Editor UI Can change as per the datasource
+
+In the code mode you can use promQL 
+In the builder mode you can construct the query in the UI
+metrics  label filters
+
+then run the query
+
+then the data will fetched
+
+Video4:
+--------
+
+Grafana Dashboards
+
+Dashboard is a collection of panels, each panel displays data in graphs,tables or other viusal elements arranged in rows to monitor and analyze specific metrics
+
+Time Series Panel
+Gauge Panel
+Stat Panel
+
+
+Dashboards tab:
+---------------
+
+Go to dashboards tab and click on Create Dashboard
+
+Add Visualization
+Select the data sources
+
+Now we can see the edit panel section, where we need to enter the query to get the data
+
+In this panel let's try to display the number of Pods running in our k8 cluster by their name space
+
+In the top right corner Visualization Tab there are multiple visual panel/elements like
+Time Series
+Bar Chart
+Stat
+Gauge
+Bar Gauge
+Table
+Pie Chart
+Histogram
+
+we can choose pie chart
+
+Give the title, description
+
+Enter the promQL in the query sections
+sum(kube_pod_status_phase) by (namespace)
+
+there are multile options in the left side
+like tooltip,legend
+
+save the dashboard
+
+now the first dashboard and panel created.
+
+Now you can add the multiple panel
+Add-Visulaization
+
+Now select the panel Stat
+
+query:
+
+count(kube_pod_status_phase{phase="Running"})
+
+you can provide custom units also in the leftside Standard Options
+
+you can customize the panel options
+
+
+3rd panel select the Time series for cpu usage
+
+sum(rate(container_cpu_usage_seconds_total{pod="utility-api-.*", container!="POD",namespace="todo"}[5m])) by [pod]
+
+
+4th panel is Gauge
+
+sum(rate(container_cpu_usage_seconds_total{namespace="todo",pod="utility-api-.*",container!="POD"}[5m])) by [pod]
+
+In threshhold settings you can change the color
+
+
+you can organize them(panel) by adding row 
+Add-Row
+give row name
+then move the penels to the row
+then save the dashboard
+
+You can auto refresh the dashboard
+
+You can mark the dashboard as favourte, this will place under the Starred Section
+
+In the Dashboard setting you can see General Tab, Annotations Tab,Variables Tab, Links Tab, Versoins Tab, Permission Tab, JSON Model Tab
+
+Annotations:
+----------
+
+Allow us Mark specific events or time ranges on a graph to providing context to time series data 
+
+For example on the CPU usage graph If I want to mark the occurrences where the cpu usage is going beyond 40%, we can achieve that with annotations
+
+Go to Annotations Tab
+Add Annotation Query
+give name
+select data source
+select color
+show in - Selected Panels (where you wnat to mark it)
+All Panels
+Selected Panels
+All Panel Except
+
+Choose the panel
+
+In Query bar, enter the promQL 
+
+sum(rate(container_cpu_usage_seconds_total{pod="utility-api-.*",container!="POD"}[5m])) by [pod] > 0.4
+
+save the dashboard
+
+These annotation can toogle on or off
+
+Link Tab:
+--------
+You can add the dashboard link
+give title name
+Type: Dashboard or link
+
+Library Panel:
+-------------
+
+if you want to reuse the same panel to multiple dashboards 
+
+instead of recreating we can create a library panel once and then use it where ever needed
+
+if you update this library panel and this changes will refelect all the dashboards where it is used
+
+click on the 3 dots top of right corner of the panel
+
+more -->Create Library panel
+
+Now when you create New dashboard instead of Add Visulatization select the Add library panel in the Import Panel option
+
+
+Version Tab:
+------------
+Here all the version saved
+From here you can restore the specific version
+
+Share:
+------
+multiple shareing method
+link:
+-----
+you can share the dashboard
+
+Snapshot
+--------- 
+you can share to the public using snapshot share
+here you can set the expiry
+publish the sanpshot
+
+you can access without login
+
+in this snapshot the future changes will not reflect
+
+Export
+---------
+Next Sharing method is export to json file
+
+Public Dashboard:
+------------------
+In this method the future changes also refelect unlike snapshot
+
+acknowledge and 
+generate public url
+
+you can pause this link also
+
+you can revoke the public url
+
+Playlists:
+-----------
+
+Allow us to create sequence of dashboards that will be displayed automatically switching from one to another at specific intervals
+
+click Crate Playist
+give name
+Interval:2s
+Add Dashboards
+
+you can start playlist if you want 
+Mode: Normal or TV or Kiosk
+
+
+We dont want to crate a dashbord from scratch we can get it from online grafan community 
+
+to import the dashboard template 
+
+go to the online dashboard
+
+https://grafana.com/grafana/dashboards/1860-node-exporter-full/
+
+Click on Copy ID to Clipboard
+or 
+Download Json
+
+Then go to New Dashboard --> import--->paste the id ---> Load -->Then select our data source
+
+import
+
+Dashboard can organized with Folders
+
+New-->Newfolder
+
+then move the dashboard
+
+Video5:
+--------
+Grafana Dynamic Dashboards
+
+Grafana support variables for dynamic dashboards
+You can create interactive dashboards
+
+Go to Dashboard Settings
+Variables Tab:
+-------------
+
+Add variable
+
+Select Variable Type:
+Query
+Custom
+Text box
+Constant
+Data source
+Interval
+Adhoc filters
+
+Name: variablename
+select datasource
+select query type:classic query
+
+you can use this variale in query by $v_name
+
+
+Video6:
+--------
+
+Grafana Alerting
+
+We need to create a Aletr rules under Alerting
+We need to create contact point to send a alert

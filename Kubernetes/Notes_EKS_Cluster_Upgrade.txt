@@ -1,0 +1,117 @@
+Upgrade with terraform 1.28  1.29
+https://www.youtube.com/watch?v=d98QPMKFhn0&pp=ygUiaG93IHRvIHVwZ3JhZGUgZWtzIGNsdXN0ZXIgdmVyc2lvbtIHCQmwCQGHKiGM7w%3D%3D
+
+https://www.youtube.com/watch?v=gw1MRNZy6lk&pp=ygUiaG93IHRvIHVwZ3JhZGUgZWtzIGNsdXN0ZXIgdmVyc2lvbg%3D%3D
+
+
+1.29 to 1.30
+https://www.youtube.com/watch?v=aDfs1T18FfQ&pp=ygUiaG93IHRvIHVwZ3JhZGUgZWtzIGNsdXN0ZXIgdmVyc2lvbg%3D%3D
+
+Current Latest is 1.33
+
+The community releases new Kubernetes minor versions (such as 1.32) on average once every four months. 
+
+
+Standard
+This option supports the Kubernetes version for 14 months after the release date. There is no additional cost. When standard support ends, your cluster will be auto upgraded to the next version.
+
+Extended
+This option supports the Kubernetes version for 26 months after the release date. The extended support period has an additional hourly cost that begins after the standard support period ends. When extended support ends, your cluster will be auto upgraded to the next version.
+
+Through Console:
+----------------
+
+First we need to check the Upgrade Insights in the UI console
+
+It shows Insight status like Passing or Warning to the upgrading version
+
+Go to the command line
+
+kubectl version
+
+Client Version: v1.32.4
+Kustomize Version: v5.5.0
+Server Version: v1.29.15-eks-4096722
+WARNING: version difference between client (1.32) and server (1.29) exceeds the supported minor version skew of +/-1
+
+
+Check the cloud Auto Scaler pods is whether running or not
+
+kubectl get po -n kube-system
+
+Go to conslole and do upgrade for the master node, it take some time
+
+Master node ugrade wont affect the worker node
+
+Now if you check the version it shows server and clinet same
+
+kubectl version
+
+But the worker node componetes not updated
+
+kubectl get nodes -o wide
+
+kubectl get pods -o wide -A
+
+NAMESPACE       NAME                                        READY   STATUS    RESTARTS   AGE     IP             NODE                           NOMINATED NODE   READINESS GATES
+cert-manager    cert-manager-5cd5c7d7f8-trdtd               1/1     Running   0          146m    10.0.102.104   ip-10-0-102-202.ec2.internal   <none>           <none>
+cert-manager    cert-manager-cainjector-7cdbdd84cc-r7scs    1/1     Running   0          146m    10.0.102.121   ip-10-0-102-202.ec2.internal   <none>           <none>
+cert-manager    cert-manager-webhook-7dd984c584-spgg4       1/1     Running   0          146m    10.0.102.106   ip-10-0-102-202.ec2.internal   <none>           <none>
+ingress-nginx   ingress-nginx-controller-5b498b5b49-r5ng8   1/1     Running   0          155m    10.0.102.216   ip-10-0-102-202.ec2.internal   <none>           <none>
+kube-system     aws-node-p7fr2                              2/2     Running   0          4h28m   10.0.102.202   ip-10-0-102-202.ec2.internal   <none>           <none>
+kube-system     aws-node-s62mp                              2/2     Running   0          110m    10.0.101.136   ip-10-0-101-136.ec2.internal   <none>           <none>
+kube-system     coredns-54d6f577c6-6cjkk                    1/1     Running   0          4h30m   10.0.102.72    ip-10-0-102-202.ec2.internal   <none>           <none>
+kube-system     coredns-54d6f577c6-sf6b9                    1/1     Running   0          4h30m   10.0.102.53    ip-10-0-102-202.ec2.internal   <none>           <none>
+kube-system     ebs-csi-controller-6c58d9d975-4lrz7         5/5     Running   0          4h3m    10.0.102.113   ip-10-0-102-202.ec2.internal   <none>           <none>
+kube-system     ebs-csi-controller-6c58d9d975-7nm5w         5/5     Running   0          4h3m    10.0.102.186   ip-10-0-102-202.ec2.internal   <none>           <none>
+kube-system     ebs-csi-node-4fzn6                          3/3     Running   0          110m    10.0.101.163   ip-10-0-101-136.ec2.internal   <none>           <none>
+kube-system     ebs-csi-node-s788g                          3/3     Running   0          4h3m    10.0.102.137   ip-10-0-102-202.ec2.internal   <none>           <none>
+kube-system     kube-proxy-gp7hb                            1/1     Running   0          4h28m   10.0.102.202   ip-10-0-102-202.ec2.internal   <none>           <none>
+kube-system     kube-proxy-rrxcc                            1/1     Running   0          110m    10.0.101.136   ip-10-0-101-136.ec2.internal   <none>           <none>
+production      nginx-deployment-8544dd669c-8gllm           1/1     Running   0          103m    10.0.101.92    ip-10-0-101-136.ec2.internal   <none>           <none>
+production      nginx-deployment-8544dd669c-cqvpt           1/1     Running   0          103m    10.0.101.77    ip-10-0-101-136.ec2.internal   <none>           <none>
+
+
+
+We need to create PodDisruptionBudget k8 Resource
+
+This will make sure during the upgrade minimum how many replica/pods will be available/running
+spec:
+minAvailable: 3
+
+Then add manualy the new node groups auto scaling group, when this will come it will automatically new version
+
+before worker node upgrade makesure new group is added and provisioned
+
+Then click on the worker node upgrade and select the update strategy is rolling update or Force update
+rolling update : This option respects pod disruption budgets for your cluster.
+
+After update you can delete the newly created autoscalling group
+
+Summary:
+
+1.ASG.Check Upgrade insights
+2.Cloud Auto Scaler
+3.Master upgrade
+4.PDB Depployment
+5.Created New Node Group Auto Scalig Group for new version
+6.Ubgraded old node groups
+7.Delete the newly created NodeGroup once old is upgraed to new one
+
+
+Through Terraform
+------------------
+
+https://www.youtube.com/watch?v=d98QPMKFhn0&pp=ygUiaG93IHRvIHVwZ3JhZGUgZWtzIGNsdXN0ZXIgdmVyc2lvbtIHCQmwCQGHKiGM7w%3D%3D
+
+https://github.com/RekhuGopal/AWS_EKS_Upgrade
+
+You can see the node group in the compute options
+
+We need to upgradede the cluser version, ami version and addon
+
+just change the version in tfvars file and apply
+
+
+I tried my self in UI, first upgraed master
+then just wene to node group and just clicked upgrded now without doing  anything, it creates another 2 nodes

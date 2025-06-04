@@ -1,0 +1,1084 @@
+The Development Team has given us Mutiple Microservices
+
+.Net   -Worker App
+Python -Vote App
+Node   -Result App
+
+redis and db
+
+CI is not requied for in memory db and database
+
+First CI
+--------
+https://github.com/dockersamples/example-voting-app
+
+
+We will create pipeline for each micro services
+
+Each microservices is working independently.
+
+Multiple developer can work and they can push the code, So the CI will take care of the integration
+
+We can trigger PR based or commit based
+
+
+Pull thecode-->UnitTet-->StatcicodeAnalysis-->Build-->endendtest-->pushimage registry-->
+
+As a devops enginer we need to create a Dockerfile inside of the app Root
+
+If need work with the development team to undersand the requied run commands and execution commands for to build a docker image
+
+We Are Using Azure DevOps for CI/CD
+
+1.Create a Project in AzureDevops
+----------------------------------
+Project Name: my-voting-app
+Description: Example Voting App
+Choose Visibility: Public or Private
+Under Advanced
+Select Version Control: Git
+Select Work item process: Basic or Agile or Scrum
+
+Create Project Done
+
+2.Repository
+-------------
+You can use GitHub or Azure Repos
+I am importing exisiting repo in the GitHub
+
+Create a Personal Access tocken in Github Developer setting
+my-voting-app-git-cred
+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
+
+Now Import the repository
+Select Repository type: Git or TFVC
+Give Clone URL:
+https://github.com/jayarajito/my-voting-app.git
+
+Select Requires Authentication:
+Give User Name and PAT
+
+Import it
+
+Azure Repo pick the branch as Alphabetically
+You can make it default bracnh as main
+Go to the Branch Section on the left side
+Just over the branch and select the 3 dots in right side and click on Set as Default Branch
+
+Pipelines:
+----------
+Need to create for 3 piplelines for 3 microservices
+
+Before pipeline we need a Artifactory for to push the container image, so use ACR
+
+Pipline for Result Microserices
+
+Click Create Pipeine
+
+There are steps:
+Connect
+Select
+Configure
+Review
+
+Connect:
+Where is your code?
+Select Azure Repos Git
+
+Select:
+Select a repoitory
+
+Configure:
+Configure your pipeline
+Select a template
+Docker-Build and push an image to Azure Container Registry
+
+Select an Azure subscription
+Continue
+
+Select an Azure container Registry
+Give Image Repository Name:myvotingapp
+Specify Dockerfile:
+$(Build.SourcesDirectory)/app-src/result/Dockerfile
+
+Now Click Validate and Configure
+
+It will create a yaml file
+
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- main
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'f481ce3b-221f-4860-8904-01986384a070'
+  imageRepository: 'myvotingapp'
+  containerRegistry: 'jaya0306acr.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/app-src/result/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+
+
+trigger:
+resources:
+variables:
+stages:
+
+We can do path Based trigger, example our app repo has multiple microservices so which microservices commited that only trigger a pipeline
+Trigger will hapen pertuclar path code changes
+
+We need a Container registry service connection(dockerRegistryServiceConnection)- this need for communicate azure devops and azure container registry 
+
+we are using our own agent name is azureagent
+
+In the task you can perform any commands like docker related, shell commands
+Click on settings button  you can get a ui to change the properties, after change click on the Add button
+
+Save and Run
+
+
+The pool is does not exit we need to create one with our own vm(self-hosted)
+
+Go to the Project Settings
+Under Pipelines click on the agent Pool
+Add Pool
+
+New or Existing
+
+Pool Type:
+Managed DevOps Pool
+SelfHosted
+Azure virtual machine scale set
+
+give name: azureagent
+
+give Pipeline permissions:
+Grant access permission to all pipelines
+
+Create
+
+Then click on the agent
+
+Under Agents tab
+Click on the new agent
+
+Now
+Download the agent
+https://download.agent.dev.azure.com/agent/4.255.0/vsts-agent-linux-x64-4.255.0.tar.gz
+
+
+Create the agent
+mkdir myagent && cd myagent
+tar zxvf ~/Downloads/vsts-agent-linux-x64-4.255.0.tar.gz
+
+Configure the agent
+./config.sh
+
+Optionally run the agent interactively
+If you didn't run as a service above:
+
+./run.sh
+
+
+I created the linux VM and login 
+172.190.139.51
+azureadmin
+ComplexPassword!123
+
+sudo apt update
+
+sudo apt  install docker.io 
+sudo usermod -aG docker azureadmin
+sudo systemctl restart docker
+
+
+mkdir myagent && cd myagent
+
+wget https://download.agent.dev.azure.com/agent/4.255.0/vsts-agent-linux-x64-4.255.0.tar.gz
+
+tar zxvf vsts-agent-linux-x64-4.255.0.tar.gz
+
+
+./config.sh
+
+Accept the Team Explorer Everywhere End User License Agreement.
+
+Connect
+------
+Enter Server URL:
+https://dev.azure.com/jayarajcs2011/
+
+It Promt for Authentication, we need Personal Access Tocken
+
+Go to the User Setting and Create PAT
+Give Name:azureagent
+Select Org:
+Expiration(UTC)
+
+9wKdhovE4fmxfKNhH0AGJHikMckPghNmp9vClS5JMGQL0XPv2TuKJQQJ99BFACAAAAArWAxJAAASAZDO3y1Z
+
+Register Agent
+--------------
+Enter Agent Pool:
+azureagent
+
+Enter Agent Name: 
+azureagent-01
+
+You can get a message
+
+Successfully added the agent
+
+
+Still this will show offline
+
+Need to run another file
+
+./run.sh
+
+Now the server listening for the Jobs
+
+
+Now run the Pipeline Manually
+Need to give the docker file path correctly
+
+Build success now you can see the image in ACR
+Under-Servcies-Repositories-RepositoryName-
+
+Success Yaml File
+
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+ paths:
+  include:
+    - result/*
+   
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'f481ce3b-221f-4860-8904-01986384a070'
+  imageRepository: 'resultingapp'
+  containerRegistry: 'jaya0306acr.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/app-src/result/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+pool:
+ name: 'azureagent'
+
+stages:
+- stage: Build
+  displayName: Build 
+  jobs:
+  - job: Build
+    displayName: Build
+    steps:
+    - task: Docker@2
+      displayName: Build the Image
+      inputs:
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'build'
+        Dockerfile: 'app-src/result/Dockerfile'
+        tags: '$(tag)'
+- stage: Push
+  displayName: Push
+  jobs:
+  - job: Push
+    displayName: Push
+    steps:
+    - task: Docker@2
+      displayName: Push the Image
+      inputs:
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'push'
+        tags: '$(tag)'
+
+Now Create a Pipeline for Anoter Service: Votingapp
+
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+ paths:
+   include:
+     - vote/*
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '9b9cd5f9-af34-4199-a30e-c89952da96dd'
+  imageRepository: 'votingapp'
+  containerRegistry: 'jaya0306acr.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/app-src/result/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+pool:
+ name: 'azureagent'
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs:
+  - job: Build
+    displayName: Build
+
+    steps:
+    - task: Docker@2
+      displayName: Build an image
+      inputs:
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'build'
+        Dockerfile: 'app-src/vote/Dockerfile'
+        tags: '$(tag)'
+
+- stage: Push
+  displayName: Push
+  jobs:
+  - job: Push
+    displayName: Push
+
+    steps:
+    - task: Docker@2
+      displayName: Push an image
+      inputs:
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'push'
+        tags: '$(tag)'
+
+
+
+Now Crate Pipeline for Another Microservice worker
+
+worker service is Failed due to inside the Dockerfile Platform options
+FROM --platform=${BUILDPLATFORM}
+FROM --platform=linux
+
+RUN dotnet restore -a $TARGETARCH
+RUN dotnet restore
+
+RUN dotnet publish -c release -o /app -a $TARGETARCH --self-contained false --no-restore
+
+RUN dotnet publish -c release -o /app -a linux-x64 --self-contained false --no-restore
+
+RUN dotnet publish -c release -o /app --self-contained false --no-restore
+
+
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+ paths:
+   include:
+     - app-src/worker/*
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'e4761284-953a-4432-8810-b246ab4fed30'
+  imageRepository: 'workerapp'
+  containerRegistry: 'jaya0306acr.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/app-src/result/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+pool:
+ name: 'azureagent'
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs:
+  - job: Build
+    displayName: Build
+
+    steps:
+    - task: Docker@2
+      displayName: Build an image
+      inputs:
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'build'
+        Dockerfile: 'app-src/worker/Dockerfile'
+        tags: '$(tag)'
+- stage: Push
+  displayName: Push
+  jobs:
+  - job: Push
+    displayName: Push
+
+    steps:
+    - task: Docker@2
+      displayName: Push an image
+      inputs:
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'push'
+        tags: '$(tag)'
+
+
+Note:
+Each Pipline the new dockerRegistryServiceConnection is creating automatically, this stored under Pipelines-Service Connection
+Each Pipline We selected for different repository for the image store
+
+
+CD Part:
+--------
+
+For CD we will use GitOps Approach
+ArgoCD Pickup the new changes
+
+For Update Stage I have a shell script, this will update the kubernetes Manifests file in the repository
+
+Acctualy this will upate the perticular microserviece deployment file
+
+ArgoCD will monitor this repository
+If realize there is any chnages, automatically update to the k8s cluster
+
+Create a K8s Cluster
+
+aws eks update-kubeconfig --region us-east-1 --name my-eks-cluster
+
+
+
+Use Of ArgoCD:
+-------------
+If some one logged in K8s cluster and changed the image version in the deployment file
+
+But the ArgoCD automatically revert the changes as per the git repository files
+
+ArgoCD give first priority for Git Repository Changes
+
+Steps:
+------
+1. Login to K8s Cluster
+2. Install ArgoCD
+3. Configure ArgoCD
+4. Update Shell Script
+
+AKS Login:
+----------
+
+az aks get-credentials \
+  --resource-group <your_resource_group> \
+  --name <your_cluster_name>
+
+
+
+Install ArgoCD:
+---------------
+
+Go to official ArgoCD documents and install it
+
+
+Argo CD - Declarative GitOps CD for Kubernetes
+Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
+
+
+
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+
+Install Ingress controller
+---------------------------
+Step 1: Create a Namespace (optional but recommended)
+
+kubectl create namespace ingress-nginx
+
+Step 2: Install NGINX Ingress Controller using Helm
+
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --set controller.publishService.enabled=true
+
+
+Output:
+NAME: ingress-nginx
+LAST DEPLOYED: Tue Jun  3 15:32:16 2025
+NAMESPACE: ingress-nginx
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+The ingress-nginx controller has been installed.
+It may take a few minutes for the load balancer IP to be available.
+You can watch the status by running 'kubectl get service --namespace ingress-nginx ingress-nginx-controller --output wide --watch'
+
+An example Ingress that makes use of the controller:
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: example
+    namespace: foo
+  spec:
+    ingressClassName: nginx
+    rules:
+      - host: www.example.com
+        http:
+          paths:
+            - pathType: Prefix
+              backend:
+                service:
+                  name: exampleService
+                  port:
+                    number: 80
+              path: /
+    # This section is only required if TLS is to be enabled for the Ingress
+    tls:
+      - hosts:
+        - www.example.com
+        secretName: example-tls
+
+If TLS is enabled for the Ingress, a Secret containing the certificate and key must also be provided:
+
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: example-tls
+    namespace: foo
+  data:
+    tls.crt: <base64 encoded cert>
+    tls.key: <base64 encoded key>
+  type: kubernetes.io/tls
+
+
+
+Step 3: Get the External IP or DNS Name
+
+
+kubectl get svc ingress-nginx-controller -n ingress-nginx
+
+abdb27a55b0a640ec826695aa91db862-1216989954.us-east-1.elb.amazonaws.com
+
+Step 4: Point Your Domain to This Load Balancer
+
+argocd.jayarajnarayanan.in
+
+
+Step 5: Apply the Argo CD Ingress Resource
+Install Cert-Manager (to auto-manage TLS)
+
+kubectl create namespace cert-manager
+
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+
+helm install cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --set installCRDs=true
+
+Output:
+NAME: cert-manager
+LAST DEPLOYED: Tue Jun  3 15:39:30 2025
+NAMESPACE: cert-manager
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+⚠️  WARNING: `installCRDs` is deprecated, use `crds.enabled` instead.
+cert-manager v1.17.2 has been deployed successfully!
+
+In order to begin issuing certificates, you will need to set up a ClusterIssuer
+or Issuer resource (for example, by creating a 'letsencrypt-staging' issuer).
+
+More information on the different types of issuers and how to configure them
+can be found in our documentation:
+
+https://cert-manager.io/docs/configuration/
+
+For information on how to configure cert-manager to automatically provision
+Certificates for Ingress resources, take a look at the `ingress-shim`
+documentation:
+
+https://cert-manager.io/docs/usage/ingress/
+
+
+
+
+Confirm Installation:
+kubectl get pods -n cert-manager
+
+
+Configure ClusterIssuer for Let’s Encrypt
+
+cluster-issuer.yaml
+
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: your-email@example.com    # 📌 Replace with your real email
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+
+kubectl apply -f cluster-issuer.yaml
+
+
+ArgoCD Ingress YAML with TLS (Auto-Cert)
+argocd-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-ingress
+  namespace: argocd
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - argocd.example.com  # 🔁 Replace with your domain
+      secretName: argocd-tls
+  rules:
+    - host: argocd.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 443
+
+
+
+kubectl apply -f argocd-ingress.yaml
+
+Patch ArgoCD Service to ClusterIP
+
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "ClusterIP"}}'
+
+
+kubectl get svc ingress-nginx-controller -n ingress-nginx
+
+Test Script to Verify ArgoCD is Accessible
+test-argocd-access.sh
+#!/bin/bash
+
+DOMAIN="argocd.example.com"  # 🔁 Replace with your domain
+
+echo "🔍 Checking HTTPS connectivity to $DOMAIN"
+curl -I https://$DOMAIN
+
+echo "🔑 Fetching ArgoCD initial admin password..."
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+echo -e "\n🔐 Use the above password with username 'admin' to log in at https://$DOMAIN"
+
+argocd.jayarajnarayanan.in
+
+argocd is working
+
+
+Configure ArgoCD:
+-----------------
+
+get the secrets
+
+kubectl get secrets -n argocd
+
+kubectl edit secret argocd-initial-admin-secret -n argocd
+
+Secrets are base64 Encoded
+
+Decode the secret
+
+echo dG9WYjVuQm85a1dISkczbw== | base64 --decode 
+
+toVb5nBo9kWHJG3o
+
+user name is admin
+
+kubectl get svc -n argocd
+
+change the svc type ClusterIP to Node Port
+37 min
+
+kubectl edit svc argocd-server -n argocd
+NodePort
+
+argocd-server                             NodePort    172.20.122.70    <none>        80:31058/TCP,443:30153/TCP   7m31s 
+
+
+to Access
+
+NodeIP:port
+
+kubectl get nodes -o wide
+
+Get the External IP Assigned
+
+http://54.81.13.170:31058/
+
+enable http sg in vmss instances
+
+I used Ingress
+
+Now login
+
+We need a Repos Personal Access Token
+9wKdhovE4fmxfKNhH0AGJHikMckPghNmp9vClS5JMGQL0XPv2TuKJQQJ99BFACAAAAArWAxJAAASAZDO3y1Z
+
+While creating you can give the scopes
+Full access or Custom defined
+
+
+Then go to argo cd left side
+Settings:
+--------
+Repository:
+Connect Repo:
+Choose your connection method: via https
+type: git
+
+ArgoCD Project Name:
+Repository URL: get it from azure repo and clone options steps
+
+In this URL we are using the accesstoken
+
+remove the text before the @ and paste the access token
+
+Now the repo connection status is success
+
+Applications:
+-------------
+
+Now create a New Application
+Application Name: myvoteingapp
+Project Name: select default only
+
+
+
+Sync Policy: Automatic (By default it takes 180 seconds 3 min)
+
+In Source, select the repo URL
+
+UnderPath: give the k8specification files path: just give the folderanme
+
+app-src/k8s-specifications
+
+Destination:
+Slect the Cluster URL
+https://kubernetes.default.svc
+Give the namespace
+myapp
+
+Now ArogCD deploy the app automatically
+
+ArgoCD not creating the namespce automatically, we need to create before
+kubectl create  namespace myapp
+
+Create Ingress for voteapp:
+--------------------------
+Option 1: Single Ingress for multiple apps (shared)
+Use this when:
+
+You have a single domain (e.g., example.com)
+
+You expose apps like:
+
+https://example.com/frontend
+
+https://example.com/backend
+
+https://example.com/argocd
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - example.com
+      secretName: app-tls
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - path: /frontend(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+          - path: /backend(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 80
+          - path: /argocd(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 443
+
+You only need 1 DNS record (example.com), and 1 TLS cert
+
+Option 2: Separate Ingress resources per app
+Use this when:
+
+You want apps on different subdomains
+
+https://frontend.example.com
+
+https://backend.example.com
+
+https://argocd.example.com
+
+Each gets its own Ingress like this:
+Frontend Ingress
+spec:
+  rules:
+    - host: frontend.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+
+Backend Ingress
+spec:
+  rules:
+    - host: backend.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 80
+
+
+kubectl apply -f voteapp-ingress.yaml
+
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "ClusterIP"}}'
+
+NAME     TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+db       ClusterIP   172.20.208.118   <none>        5432/TCP         31m
+redis    ClusterIP   172.20.248.193   <none>        6379/TCP         31m
+result   NodePort    172.20.54.197    <none>        8081:31001/TCP   31m
+vote     NodePort    172.20.196.108   <none>        8080:31000/TCP   31m
+
+kubectl get svc -n myapp
+
+kubectl patch svc vote -n myapp -p '{"spec": {"type": "ClusterIP"}}'
+kubectl patch svc result -n myapp -p '{"spec": {"type": "ClusterIP"}}'
+
+myvoteapp.jayarajnarayanan.in
+
+Update Script:
+---------------
+Go to pipeline and add the update stage
+this will do
+Pick new image in the ACR and then update to the k8s repository perticular microservices
+
+In our pipeline iamge tag is basiclly build numer
+
+we want to update this build number
+
+In the update state we are using the Task as ShellScript
+
+We need to provide the script path and CMD line Arguments
+
+create a script folder in azure repo and add it
+
+updateK8sManifests.sh
+
+
+#!/bin/bash
+
+set -x
+
+# Set the repository URL
+REPO_URL="https://<ACCESS-TOKEN>@dev.azure.com/<AZURE-DEVOPS-ORG-NAME>/voting-app/_git/voting-app"
+
+# Clone the git repository into the /tmp directory
+git clone "$REPO_URL" /tmp/temp_repo
+
+# Navigate into the cloned repository directory
+cd /tmp/temp_repo
+
+# Make changes to the Kubernetes manifest file(s)
+# For example, let's say you want to change the image tag in a deployment.yaml file
+sed -i "s|image:.*|image: <ACR-REGISTRY-NAME>/$2:$3|g" k8s-specifications/$1-deployment.yaml
+
+# Add the modified files
+git add .
+
+# Commit the changes
+git commit -m "Update Kubernetes manifest"
+
+# Push the changes back to the repository
+git push
+
+# Cleanup: remove the temporary directory
+rm -rf /tmp/temp_repo
+
+
+Access token should be passed in securly via environment variable
+
+For CMD LineArguments
+First Arguments is vote deployment file name
+
+vote
+
+Second Arguments is Repository name
+you can use the variable this already speicfied in the pipeline
+
+$imageRepository
+
+Thir argument is build number that is tag
+
+$tag
+
+vote $(imageRepository) $(tag)
+
+
+
+
+Update ArgoCD Syn Time
+-----------------------
+
+
+kubectl edit cm argocd-cm -n argocd
+
+data:
+  timeout.reconciliation: 10s
+
+
+
+You will get the error in pods
+ErrImagePull
+
+Acctually this looks for the Credential to autheticate the ACR
+
+
+Go to Container Register and get the Acces keys
+
+Registry name  jaya0306acr
+Login server   jaya0306acr.azurecr.io
+Admin user     Check Mark Enabled
+Username       jaya0306acr
+password       MJQ7F5gvxKTPnVGYc9wEQBSyXemLYsY+RaK0qcAfAw+ACRBJwAIu
+password2
+
+
+# Command to create ACR ImagePullSecret
+
+```
+kubectl create secret docker-registry <secret-name> \
+    --namespace <namespace> \
+    --docker-server=<container-registry-name>.azurecr.io \
+    --docker-username=<service-principal-ID> \
+    --docker-password=<service-principal-password>
+```
+
+you want to create a scret in which name spaace the pods are running
+
+kubectl create secret docker-registry acr-secret \
+    --namespace default \
+    --docker-server=jaya0306acr.azurecr.io \
+    --docker-username=jaya0306acr \
+    --docker-password=MJQ7F5gvxKTPnVGYc9wEQBSyXemLYsY+RaK0qcAfAw+ACRBJwAIu
+
+
+In the Deployment yaml You need to add the ImagePullSecret:
+
+      imagePullSecrets:
+      - name: acr-secret
+
+Under scrpt file update the correct image regisry with acr jaya0306acr.azurecr.io
+
+
+azureadmin
+ComplexPassword!123
+
+
+abdb27a55b0a640ec826695aa91db862-1216989954.us-east-1.elb.amazonaws.com
+
+kubectl apply -f vote-ingress.yaml -n myapp
+kubectl describe certificate vote-tls -n myapp
+kubectl describe ingress vote-ingress -n myapp
+
+kubectl apply -f result-ingress.yaml -n myapp
+kubectl describe certificate result-tls -n myapp
+kubectl describe ingress result-ingress -n myapp
+
+kubectl apply -f voteapp-ingress.yaml -n myapp
+
+
+curl -vk https://myvoteapp.jayarajnarayanan.in/vote
+curl -vk https://myvoteapp.jayarajnarayanan.in/result
+
+
