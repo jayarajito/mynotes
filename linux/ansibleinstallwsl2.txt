@@ -1,0 +1,21 @@
+$ python3 -m pip -V
+
+pip 24.0 from /usr/lib/python3/dist-packages/pip (python 3.12)
+
+$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+$ python3 get-pip.py --user
+
+above commands not worked so installe as below
+
+sudo apt install python3-pip
+
+
+
+$ python3 -m pip install --user ansible
+
+above command not working
+
+sudo apt install ansible
+
+ansible --version
+ansible-community --version
