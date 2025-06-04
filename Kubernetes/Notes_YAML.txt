@@ -1,0 +1,94 @@
+https://www.youtube.com/watch?v=3nsOxJR1-pY&list=PLrMP04WSdCjrkNYSFvFeiHrfpsSVDFMDR&index=4
+
+
+Introduction to YAML:
+---------------------
+
+human readable and easy to understand
+
+“YAML” is an acronym which stands for "YAML Ain't Markup Language" or "Yet Another Markup Language." 
+
+Serialization Language:
+----------------------
+YAML -YAML (YAML Ain't Markup Language):
+JSON -JSON (JavaScript Object Notation):
+XML - XML (Extensible Markup Language):
+
+Serialization:
+The process of converting a data object or structure into a sequence of bytes or characters. 
+
+Deserialization:
+The reverse process of reconstructing a data object or structure from its serialized form. 
+
+
+Configuration fils are written in yaml rather than json
+
+Json uses curly brackets {}
+XmL uses angle brackets <>
+yaml - no any such special character, instead it use line separation and indentation
+
+
+Write yaml file:
+---------------
+Most of things in key value pair
+name: local-cluster
+space after colon is mandatory
+
+you can use any case like camel case,snake case(using underscores and all letters are in lowercase)
+
+
+yaml automatically deduct the data type based on the values.
+
+For string wheter you can use '' "" or nothing
+
+if you wnat to explicitly menction datatype then use like
+!!str 1245
+
+use # for comments inline
+yaml does not support multiline comments
+
+for array(list) is - (hypen)
+
+you can group by dictionary(map)
+access:
+  ip: 192.168.1.1
+  port: 8444
+
+YAML Data Types
+YAML supports a variety of basic data types - strings, integers, floating point, and booleans.
+
+
+Boolean values can be defined via three keywords in YAML - True / False, Yes / No, and On / Off. 
+
+YAML Data Types - Folding Strings
+
+It’s possible to write long strings in YAML by using the “>” operator. 
+
+myJoke: >	
+  How did the programmer die in the shower? 
+  A. He read the shampoo bottle instructions: 
+  Lather. Rinse. Repeat.
+
+These strings will be concatenated into a single string when read from the file. 
+
+YAML Data Types - Block Strings
+It’s possible to write multi-line strings in YAML by using the “|” operator.
+
+myBetterJoke: |
+  Give a man a program, and frustrate him for a day. 
+  Teach a man to program, frustrate him for a lifetime.
+
+https://www.kerno.io/learn/yaml-file-format-complete-guide
+
+triple dash says new documents start, you can write multiple documetns in the same yaml file
+
+---
+
+
+you can use variable as &clusterVersion !!str 1.22.1
+
+you can use the variable name *clusterVersion in multiple places
+
+to declare a variable use the symbol &
+to access a variable use the symbol *
+

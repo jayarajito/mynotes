@@ -1,0 +1,66 @@
+https://www.youtube.com/watch?v=MbgFIQoVh6w
+
+https://www.youtube.com/@PavanElthepu/playlists
+
+What we will learn:
+Requesting CPU and Memory
+Limiting CPU and Memory
+Quality fo Service
+Setting min,max and default resources for pods in a namespace - LimitRange
+Limiting resources in a namespaces-ResourceQuota
+
+Computing Resurces:
+CPU and Memory
+
+1cpu (1000m)
+200m is 0.2 cpu m-milicore
+
+
+Every container we can define the   requests(minimum resource) under resources in yaml file
+
+Also we can define limits, maximume resouce can allocate
+
+If requested resource is not available then the pod container is pending state in status, but pod is created
+
+best practices is define the request and limits
+
+if pod will use more than the speicfied memory,then it will killed -that is called OOMKilled
+
+if pod will use more than the specified cpu, then The container's performance will slow down as its CPU access is restricted- that is called CPU throttling 
+
+requst and limits are defined by container level, not by the pod level
+
+get the node information
+
+kubectl get nodes
+
+kubectl describe node <node-name>
+
+
+kubectl top node <node-name>
+
+
+Once the Pod is created it does not allow to change the resources
+
+kubectl get pods -o wide
+
+you can check how much the resources the pods are using
+
+kuectl top pods
+
+
+we need a metrics server, so need to enable it, by default enabled in eks, aks
+
+
+if you wnat to limit the resoure for the Pods then use the Kind: LimitRange
+under limits: you can define min and max
+
+
+if you wnat to limit the resource for the namespaces then use the kind:ResourceQuota
+under hard: you can define
+
+not only requst and limits you can define number of pods, secrects,configmaps,servies,persistentvolumeclaims
+
+
+
+

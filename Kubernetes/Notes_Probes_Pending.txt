@@ -1,0 +1,19 @@
+https://www.youtube.com/watch?v=EF6c7MkOhkw&list=PLrMP04WSdCjrkNYSFvFeiHrfpsSVDFMDR&index=13
+
+Probes in Kubernetes
+---------------------
+
+A Pod is restarted automatically by kubernetes if k8s find the pod is unhealthy
+
+this check health of the main process of the pod
+
+k8s does not check the health of the other process(interal application)
+
+for some reason if restart the container application works
+
+inthis case how to know k8 needs to restart the container
+
+Probes:
+Investigates the pods if they are working correctly or not
+
+225

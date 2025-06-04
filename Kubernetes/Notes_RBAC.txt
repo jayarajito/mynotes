@@ -1,0 +1,112 @@
+https://www.youtube.com/@PavanElthepu/playlists
+
+Restrict Kubernetes access using RBAC
+
+Authentication: Identify the user error 401
+
+Autorization: Providing permission to perform the actions error 403
+
+success 200
+
+
+Example
+Role          Access
+Developer Create,Read,Update
+Monitoring Read
+Admin Create,Read,Update,Delete
+
+
+In k8s we can not create a user like creatng the pods,deployment,svc
+
+k8s does not manage user, this managed by external identiy provider like Keycloak,AWS IAM
+
+Authentication and Autherrization handled by k8s
+
+information related to the cluster is stored in .kube/config
+
+Configure the user credentils
+
+kubectl config set-credentials
+
+Configure the Context
+kubectl config set-context contextname --cluster=clustername --user=username --namespace=namespacename
+
+you can verify
+
+kubectl config get-contexts
+
+switch the context
+
+kubectl config use-context contextname
+
+switch back to the admin user
+
+In k8s to give the permisson to users we can use Role and RoleBinding
+
+in yaml file use the kind: Role
+under rules you can define
+-apiGroups
+ verbs: permission get watch list
+ resources: pods pods/log
+
+kubectl apply -f role.yaml
+
+now user and role is ready
+
+kubectl get roles
+
+Now needs to do role binding
+
+in yaml file use kind:RoleBinding
+subjects:
+- kind: User
+  name:
+  apiGroup: rbac.authorizaion.k8s.io
+- Kind: ServiceAccount
+- Kind: Group
+roleRef:
+  kind:Role
+  name:rolename
+
+in this yaml file connecting to the user/group/svc account to role
+
+the user has the permission only in the namespae where the rolebinding is defined
+
+to avoid this use the kind:ClusterRole
+
+instead of the user we can use group also
+
+
+
+Service Accounts:
+Every namespace has the 'default' service accounts when it is created
+
+If not mectioned which servie account pod shoud use, then it use default service account
+
+you can create custom service accounts
+
+kubectl get sa
+
+
+kubectl create sa name
+
+attach the role binging for this account
+
+you need to define the serviceAccount: name  attribute in the pod yaml file
+
+like this way pod can use the svc account to access the kubernets resources
+
+you can check the permission quickly
+
+kubectl auth can-i create pods
+
+kubectl auth can-i create pods --as="syste:serviceaccount:default:test-sa"
+
+kubectl auth can-i get pods --as="system:serviceaccount:default:test-sa"
+
+
+
+
+
+
+

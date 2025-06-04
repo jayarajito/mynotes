@@ -1,0 +1,585 @@
+https://github.com/pelthepu/todo-api/tree/prometheus
+
+
+https://www.youtube.com/watch?v=vY61h6cSkVA&list=PLrMP04WSdCjrL4OBnaqXRy8X3XEd7ZrKf
+
+By default, Prometheus uses port 9090
+
+The default port number for Grafana is 3000
+
+Video1:
+Observability Vs Monitoring
+
+We need to find the bugs before customer identifying
+
+So monitoring come to the picture
+
+What metrics can be tracked
+
+4 golden Signals for any applications
+Latency
+Traffic
+Errors
+Saturation
+
+Latency:
+Time it takes for a request to travel from the client to the server and back
+
+Traffic:
+Number of requests a system receives over a specific period
+
+Errors:
+Percentage of requests resulting in errors, such as 404 Page Not Found or 500 Internal Server errors
+
+Saturation:
+Measures resources unilization, including CPU,Memory, and disk space
+
+store these datas in dashboards ans send the alerts only importants
+
+
+Observability:
+o11y
+
+3 pillars of Observability
+Logs
+Metrics
+Traces
+
+Logs:
+Provide a Chronological record of events, or transactions within a system
+
+It provide When it happen and What happen
+
+we can use grafana loki
+
+Metrics:
+Quantitative measurements that offer a snapshot of a system's performacne over time
+
+Prometheus collect the metfics
+
+Traces:
+Helps track the flow of requests through various services and components of a system.
+
+We can use Grafana Tempo
+
+
+Differenes:
+Monitoring
+Notifies about the problem
+Limited Information
+Observability
+Details about the problem
+Complete information
+It help us identify the root cause
+
+Video2:
+Prometheus:
+What is metrics?
+
+you are seeing one of the service running slower than what you expected
+
+Average response time is high
+
+One possible for this slowness high users are using at given time
+
+request count is high
+
+here request count and response time is metrics
+
+metrics consist of name and value optionaly contains labels
+
+
+What is TSDB?
+Time Series Data base, stores effeciently the time series data
+
+What is Prometheus?
+In production thousands of microservices provides/generate thier own metrics
+
+Not only application metrics, it provides nodes metrics
+
+we can store all these metrics in single centralized places(TSDB) and then using this we visualize the data
+
+Also we can configure alerting, to send notification for critical ones
+
+Prometheus is opensource Monitoring and Obserablity tool.
+
+Maintain by CNCF-Cloud Native Computing Foundation
+
+This will collect all the metrics and store them in the centralized TSDB
+
+
+Promethus provide native support or containers and kubernetes
+
+Alternatives for Promethus
+Nagios
+DataDog
+InfluxDB
+Graphite
+Fluentd
+New Relic
+
+Video 3: 
+Prometheus Architecture
+-----------------------
+
+Core Componets is Prometheus Server
+------------------------------------
+
+Responsible for collecting metrics for Application and servers, Kubernetes clusters,Database engines
+
+These are called as Target
+
+Prometheus collects metrics from these configured targets by scraping the HTTP enpoints
+
+Then stores the data in TSDB
+
+TSDB Stored locally on disk and by default it's only retained for 15 days, you can modify configure, also you can use remote storage s3 or bloab storage
+
+Prometheus server Provides an API(http server) to query the data from the TSDB
+
+1.Collect Metrics
+2.Stores in TSDB
+3.Provides an API
+
+
+Promethues does not collect the application metrics by default , we need to do instrumentation, developer need to configure promethues client libraries
+
+prometheus-net is a .NET client library for Prometheus.
+
+
+prometheus_client_php - for php
+
+prom-client  - for nodejs
+
+Offical Support languages
+client_golang
+client_java
+client_python
+client_ruby
+client_rust
+
+Exporter:
+---------
+In Prometheus, an exporter is a software component that gathers metrics from a specific system or application, transforms them into a format that Prometheus can understand, and then exposes them through an HTTP endpoint for Prometheus to scrape. 
+
+Essentially, exporters bridge the gap between systems that don't natively expose Prometheus metrics and the Prometheus monitoring system. 
+
+Exporters collect data from various sources, such as databases, hardware devices, or applications.
+
+HTTP Exposition:
+HTTP endpoint, typically on a port like 9100 
+
+1.Fetch metrics
+2.Convert to Promethues Format
+3.Expose via an API
+
+Exmple:
+node exporter
+gets the metrics from the linux node and convert them
+mongodb exporter, etc
+
+Promethus is Primarily a pull-based monitoring system
+
+Push Gateway:
+-------------
+Prometheus has a component claled push gateway 
+Shortlived applications(like, jobs,lamda functions that do not have long running http endpoints) can send their metrics to the push gateway, from there the prometheus server can pull the metrics
+
+Service Discovery:
+------------------
+
+Automatically discover and monitor different targets
+
+PromethusUI
+-----------
+port 9090
+Prometheus UI is primarily useful for Adoc Queries and Debugging and provide basic graph
+
+PromQL
+
+For creating Actual Graphs or Dashboards Grafana is Recommended
+
+AlertManager:
+------------
+Prometheus have the capability to define rules to receive notifications
+
+When these alerting rules are met the prometheus server tirgger the Alert Manager 
+
+Alert Manager Sends notification to various channels slack,teams,email
+
+
+Prometheus Summarize:
+---------------------
+Prometheus collects metrics from the configured targets at a regular intervals and store them in a local or configured TSDB and display the results in a Promethues UI and can trigger alerts if certiain conditions are met
+
+
+
+Video4:
+---------
+Promethues Installation
+https://prometheus.io/docs/prometheus/latest/installation/
+
+You can install it in the EC2 also and connect the EKS
+
+It's best practice to run Prometheus inside EKS using Helm charts like kube-prometheus-stack.
+
+https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
+
+https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack
+
+https://artifacthub.io/packages/helm/prometheus-community/prometheus
+
+best practics use separate nasmespace for monoitoring
+
+kubectl create ns monitoring
+
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+
+helm install my-prometheus prometheus-community/prometheus --version 27.16.0 -n monitoring
+
+kubectl get pods -n monitoring
+kubectl get svc -n monitoring
+
+
+To access you can use port fording or ingress
+
+Portforwarding:
+kubectl port-forward svc/prometheus-server 9090:80 -n monitoring
+
+for ec2 instacne
+kubectl port-forward svc/prometheus-server 9006:80 --address 0.0.0.0 -n monitoring
+
+For Ingress:
+
+Video5:
+-------
+https://www.youtube.com/watch?v=H15VajJBZGs&list=PLrMP04WSdCjrL4OBnaqXRy8X3XEd7ZrKf&index=5
+
+Prometheus Instrumentaion
+
+We need to change the code expose the metrics
+
+for spring boot application in pom.xml we need to add depedeancy actuator and then open application.properites
+and expose the metrics
+management.enpoints.web.exposure.include=*
+
+actuator/metrics  you can access the metrics
+actuator/metrics/metricname you can acces speicfic metrics
+
+
+this metrics not understand by promethteus so need to add another dependacy to convert prometheus understandable format
+
+micrometer
+
+
+now you can access
+actuator/prometheus
+
+see the helm videwo for deploy the spring app on minikube
+
+
+now we want to add the targets to prometheus configuration in config map
+
+kunectl get cm -n monitoring
+
+kubectl edit cm prometheus-server -n monitoring
+
+if you want to edit the file using any code editor then place this line in bash profile
+
+export KUBE_EDITOR='code --wait'
+
+in the yaml file under scrape_configs: define the job with metrics_path, scrape_interval and under static_configs: you can define the targets:['todo-api.todo:8080']
+
+
+now you can check the targets in the UI
+status-->targets
+
+Uniform Resource Identifier (URI)
+Uniform Resource Locator (URL)
+URI vs URL - DataFlairA URI (Uniform Resource Identifier) is a general-purpose identifier for a resource, while a URL (Uniform Resource Locator) is a specific type of URI that provides the address and method for accessing that resource on the internet. Essentially, all URLs are URIs, but not all URIs are URLs.
+
+
+
+Video6
+-------
+https://www.youtube.com/watch?v=s7POhhqh-B0&list=PLrMP04WSdCjrL4OBnaqXRy8X3XEd7ZrKf&index=6
+
+Prometheus Service Discovery
+
+If the number of the application increase, it is dificult to configure manualy 
+
+Automatically find the targets based on the pattern, this is known as Service Discovery
+
+
+besides static_configs Prometheus support dynamically discovering the targets using various Service Discovery Mechanism
+
+kubernetes_sd_configs: this will scrap all endpoints of k8s, service,pod,node,or ingress
+
+Also we can define the rule, like if you want scrape services from a specific namespace or specific labels
+
+this can be achived by using relabel_configs:
+action: keep or drop or replace or labelmap
+regex:true
+source_labels:
+  _annotation
+
+
+kubectl edit svc svcname -n namespae
+
+go to annotations section and add this
+
+prometheus.io/path: /actuator/prometheus
+prometheus.io/scrape: "true"
+
+
+Video7
+-------
+https://www.youtube.com/watch?v=cBVmkCjOa38&list=PLrMP04WSdCjrL4OBnaqXRy8X3XEd7ZrKf&index=7
+
+Prometheus Custom Metrics
+
+Common Metrics:
+CPU usage
+Memory Consumption
+Requests Received
+
+Custom Metrics:
+How many Todo items were created in the last 2 days?
+How many pending todo items are there at the moment?
+
+this help us monitor application performance and behaviour
+
+4 Types of Metrics:
+
+1.Counter -- Only increment way over the time
+2.Gauge -- Increase or decrease over the time
+3.Histogram -- if you want to record the metrics as Range or Bucket 
+4.Summary --similar to histogram but instead of measuring over time it use quantiles
+
+for calculating averge it uses percentile
+50 the percentile: it placed the values in assending order and take 2 middle and average it
+
+this also gives 90th and 99th percentile
+
+
+Video8
+-------
+Prometheus Query Language(PromQL)
+
+If we want to access or do some operation on database we need a quary language
+
+that's where the ProQL come to the picture
+
+Where we use PromQL?
+1.Get metrics we are intrested in
+2.Aggregate metrics
+3.Build Dashboards
+4.Setup Alerts
+
+Syntax:
+Just type the metric name
+http_server_requests_seconds_count
+
+to filter use label and values
+
+http_server_requests_seconds_count{uri="/api/todos"}
+
+we can do multiple filter using comma , this for AND condition
+
+http_server_requests_seconds_count{uri="/api/todos",method="GET"}
+
+for OR Command use regex
+
+http_server_requsts_seconds_count{status=~"2..|3..|4.."}
+
+For Not
+
+http_server_requsts_seconds_count{status!~"5.."}
+
+to get the metrics for the specific time
+
+http_server_requsts_seconds_count@1748326434
+
+
+In computing, the epoch is often January 1, 1970, 00:00:00 Coordinated Universal Time (UTC)
+
+is the number of seconds that have elapsed since January 1, 1970 (midnight UTC/GMT),
+
+Also we can use offset for before 5 min or etc
+
+
+http_server_requsts_seconds_count offset 5m
+
+you can also comment using ctrl+/
+then shift enter to continue the query
+
+Also we can use period of time
+
+http_server_requsts_seconds_count[1h]
+
+
+Data Types:
+-----------
+Three primary data types
+
+1.Scalar - simple numeric folat numbers, there is no timestamp
+2.Instant Vector - single value at a given time
+3.Range Vector - range value at a given time
+
+
+Functions:
+----------
+
+sum(http_server_requests_seconds_count{uri="/api/todos"})
+
+you can use "by" for grouping
+group the mtercis by label
+
+sum(http_server_requests_seconds_count{uri="/api/todos"}) by (method)
+
+rate(requst_count[3m])
+
+calculate rate of change per seconds
+
+rate function accept the range vector as input
+
+
+rate(requst_count[3m])
+rate will take last minus first data point values
+(190-90)/(3*60) = 0.55
+requst is increasing 0.55 per second
+
+
+
+irate(requst_count[3m])
+similar to rate but
+irate will take last minus previous data point values
+
+(190-178)/(3*60) = 0.06
+
+this useful for find sudden spike or drop changes
+
+increase(requst_count[3m])
+
+this will calculate net change rather than per seconds
+
+this will take last (minus) first data point values
+increase(requst_count[3m])
+190-90 =100
+
+
+histogram_quantile()
+
+4 golden metrics
+----------------
+Traffic/Rate
+Error Rate
+Latency/Duration
+Saturation
+
+
+Video9
+--------
+https://www.youtube.com/watch?v=ewA8hb0w314&list=PLrMP04WSdCjrL4OBnaqXRy8X3XEd7ZrKf&index=9
+
+Prometheus is pull based monitoring system
+
+application is expose the metrics and the prometheus job is need to collect it
+
+but timiely manner or short living application and short lived jobs will come and go
+
+for this type of application we can monitor using push gateway
+
+Prometheus Push GateWay:
+------------------------
+
+Prometheus has the component call push gateway 
+these short lived application send their metrics to push gateway and from here prometheus will pull the metrics
+
+push gateway act as just like a metrics cache
+
+here push gateway is the target
+
+we can use push gateway limited,
+
+more draback one drawback is dublicate storage of metrics 
+
+
+pushgateway is included in the helm chart install
+
+pod and service is running
+
+kubectl get pods -n namespace
+
+
+push gateway will access on port 9091
+
+kubectl port-forward svc/servicename 9091:9091 -n namespace
+
+localhost:9091
+
+implement the app to push the metrics to pushgateway
+
+you can update this endpoint in the prometheus configmap
+
+this configuration alredy added by default
+
+
+Video10
+--------
+Exporter in Prometheus
+
+https://www.youtube.com/watch?v=YlgzhkmyPjU&list=PLrMP04WSdCjrL4OBnaqXRy8X3XEd7ZrKf&index=10
+
+
+linux system and mongodb can not instrument directly so here exporter help us
+
+We have a node that has metrics like cpu,memory usage
+
+prometheus accept the mertics a specific format
+
+nodes send the metrics to exporter
+
+exporter convert the metrics to prometheus understandable format
+
+node-exporter is responsible for export the nodes metrics
+
+prometheus scrape the metrics from the node exporter
+
+1.Fetch Metrics
+2.Convert to Prometheus Formal
+3.Expose via an API endpoint
+
+lot of exporter available in the community
+
+popular one is node-exporter this collect the metrics from unix systems
+
+
+node-exporter alreday incldued in the helm install
+
+get the deamonset
+
+kubectl get ds -n namespace
+
+port running 9100
+
+/metrics
+this targets automatically connected by service Discovery
+
+metrics names
+
+node_cpu_seconds_total
+
+Get all metric names:
+
+    curl -g 'http://localhost:9090/api/v1/label/__name__/values'
+
+
+Get all metric names filtered by a label:
+
+
+    curl -g 'http://localhost:9090/api/v1/label/__name__/values?match={job!=\"prometheus\"}'
+
+

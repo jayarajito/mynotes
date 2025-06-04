@@ -1,0 +1,225 @@
+https://www.youtube.com/watch?v=3HqLVgteMrQ&list=PLrMP04WSdCjqn4TnWgG1KYWt4guSX0BPM
+
+https://github.com/pelthepu/helm/tree/main
+
+Helm Chart:
+
+The package manager for Kubernetes
+
+A Helm chart is a package that encapsulates everything needed to deploy an application to a Kubernetes cluster, including configuration files, templates, and other resources.
+
+Components:
+A Helm chart typically includes the following files: 
+
+Chart.yaml: Contains metadata about the chart, like its name, version, and dependencies.
+ 
+values.yaml: Defines default configuration values that can be overridden during deployment.
+ 
+templates/: Contains the template files that are rendered to create the Kubernetes manifests.
+ 
+charts/: Stores any dependencies on other charts. 
+
+
+How it works:
+When you use Helm to deploy a chart, the templates/ directory's files are combined with the values.yaml file to generate the Kubernetes manifests. 
+
+These manifests are then applied to the Kubernetes cluster, creating the necessary resources for your application.
+
+
+Problem Statement1:
+If we want to deploy the simple application we need
+deployment.yaml
+service.yaml
+ingress.yaml
+secret.yaml
+
+for more complex application we may requierd other menifiest files
+
+After create manifest file we need to apply for each file
+
+kubectl apply -f
+
+If you you want to package all these manifest file to single bundle here helm comes to the picture
+
+in single command you can deploy the application
+
+these bundle is called chart
+
+this chart is installed easily
+
+helm provides more other benefits
+
+Problem Statement 2:
+you want to deploy the applicatin after the mongodb
+
+in this case helm will manages the dependencies
+
+Problem Statement3:
+you want to deploy the app to differemt environment with different values
+
+in this case, without hardcoding the values we can use the placeholder in helm using values.yaml 
+
+we can deploy same chart for different set of values for different environment
+
+Problem Steaement4:
+After update the version of the app, if the app not works you want to rollback to previous versions
+
+while you roll back with deployments and stateful sets with kubectl some resources such as secrets do not support the direct rollbacks with kubectl
+
+but when we install the same application with helm, helm creates a release and stores in the form of a kubernetes secret
+
+help of helm we can package all the menifiest files and share others
+
+Architecture:
+Helm is a command line tool
+it uses its library to prepare the manifest file and interact with the k8s api server
+
+As needed it downlaods the charts from Artifact HUB(chart repository)
+
+helm use the same .kube/config for connection
+
+helm version
+
+helm create todo-api
+
+ls
+
+cd todo-api
+
+ls
+
+here you can see 
+cahrts
+templates
+Chart.yaml
+values.yaml
+
+Chart.yaml
+contains metadata about chart like name, version
+
+Templates:
+This directory contain maneifiest files
+
+values.yaml
+place holders values are defined here
+
+{{.Values.}}
+
+
+in deployment yaml file, if you want the default value then use | pipe, when the values not in the valules.yaml file this default value will take
+
+
+_helpers.tpl
+this file allows us to define the reusable template helper functions
+
+you can use this by include keyword
+
+NOTES.txt:
+--------
+it contains the steps to follow after the instalation of the chart is successfull
+
+
+Go to the chart.yaml and add the dependinces
+
+Icon can give here
+
+
+run a lint before install the chart, to make sure no any syntax error
+
+helm lint .
+
+add the repo
+
+helm repo add
+
+for using dependancy first we need to downlad and place that inside the charts folder
+
+helm dependency build
+
+
+Now install with release name
+
+helm install todo-api .
+
+if values.yam not in root directroy then use
+
+helm install todo-api . -f values.yaml
+
+kubectl get pods
+
+
+to see the manifest file
+
+helm template .
+
+whenever install a chart helms create release
+
+one chart can be often installd many times into the same cluster, each time install the new release is created
+
+if you want to install 2 mongodb then install the chart twice
+
+check the release
+
+helm list
+
+to update a release for 2 replicas
+
+after changeing vauls.yaml file
+
+you can use
+
+helm upgrade todo-api .
+
+to see all the release
+
+helm history todo-api
+
+now two pods created
+kubectl get pods
+
+you can directly pass the values as below
+
+helm upgrade todo-api . --set image.tag=1.0.9
+
+if there is any error you can roll back
+
+helm rollback todo-api 2
+2 is a revison number
+
+test a helm chart
+helm test todo-api
+
+how do i share a chart with others
+
+package the chart and push to the artifact hub
+
+
+helm package .
+
+then move this package byndle  to any directory and then generate metadata file containing the avilable charts
+
+helm repo index bundledirectory
+it create a index.yaml file
+
+now push to github
+
+copy the repositroy url 
+login to the artifact hub and add the repository
+
+then add repo this to install
+verify repo
+
+helm repo ls
+
+helm install releasename repositoryname/chartname --version
+
+
+how to uninstall the chart
+
+helm uninstall releasename
+
+
+
+
+
+ 

@@ -1,0 +1,172 @@
+https://github.com/pelthepu/Kubernetes/tree/master/resources/statefulsets
+
+https://www.youtube.com/watch?v=eUa-IDPGL-Q&list=PLrMP04WSdCjrkNYSFvFeiHrfpsSVDFMDR&index=11
+
+Statefulsets
+-------------
+
+What will learn
+1.Stateful vs Stateless
+2.Deploying a Stateful application
+
+
+Statful Application:
+--------------------
+We should save the state in the database instead of saving application
+
+the database is stateful application
+
+Problems:
+Separate pvs
+orderred pods
+sticky identity
+
+Problem1:
+If you deploy the 3 replicas of the db, these 3 pods are using same persistance storge, this leads to data inconsistancey 
+
+So solutions is use separate perstance storage for each replicas
+
+this can be achived by stateful sets
+
+we need to define volumeClaimTemplates
+
+Problem2:
+Master should come fisrt
+Then slave1 should come with data from the Master
+Then Slave2 should come with data from the Slave1
+
+After these initial clone slave1 and slave2 sync the data from Master
+
+If you use deployment for this kind of applications all the pods are created paralely 
+
+
+if you deploy same application in stateful sets pods are created one by one
+
+if the first pods not create for any reason, then the next pods never create 
+
+Also if you delete the stateful set , the last pod delete the first
+
+Problem3:
+If the pods restart we need the same name, so we need sticky identity
+
+if you use stateful set, we will get the pods with naming convention
+mongo-0 mogno-1
+if the pods restart also the same name will given
+persistant volume also attached same after restart
+
+for this we do not do anything, stateful sets will take care
+
+if we call the services, the requsts goes to random pods
+we need a way to talk to the specific pod directly 
+
+for this perpose k8s provide speacial service called headless service
+
+When you specify clusterIP None, that service is called Headless service
+
+Through this service each pods gets its dns entry
+
+for mongodb 
+
+podname.svcname.ns.svc.cluster.local:27017
+
+when you use this dns the request goes to directly specifi that pod
+
+Deployment Vs Statefulset
+--------------------------
+
+Deployment:
+1.Used to deploy Stateless applications
+2.All pods are created parallelly
+3.If you scale down, pods are deleted randomly
+4.Random name is assigned to all pods
+5.Same PV is used for all pods
+6.Scaling is easy
+
+Statefulset:
+1.Used to deploy stateful applications
+2.Pods are created one by one
+3.If you scale down, pods are deleted in reverse order
+4.Sticky and predictable name is assigned to the pods
+5.Different PVs are used for each pod
+6.Scaling is difficult
+
+
+Practical
+----------
+
+kubectl api-resources | grep statefulset
+
+kind: StatefulSet
+
+similar to deployment but few changes
+
+instead of giving pvc, we will give VolumeClaimTemplates:
+
+kubectl apply -f statefulset.yaml
+
+kubectl get pods -w
+
+kubectl scale sts stsname --replicas=7
+
+kubectl get pvc
+
+Note: when you scale down the pods the pvc is not deleted
+
+kubectl describe pod podname
+
+you can create a headless service like normal service type
+
+Note: haedless services can not be access directly outside of the cluster
+
+
+Note: statefulset just manage your pods it does not create your db replication for you, replication need to do by ourself
+
+login to the master mongodb
+
+kubectl exec -it mongo-0 -- mongo 
+
+now intiate the replica
+
+rs.initiate( {
+   _id : "rs0",
+   members: [
+      { _id: 0, host: "mongo-0.mongo.default.svc.cluster.local:27017" },
+      { _id: 1, host: "podname.svcname.ns.svc.cluster.local:27017" },
+      { _id: 2, host: "podname.svcname.ns.svc.cluster.local:27017" }
+   ]
+})
+
+
+exit
+
+lgoin to again
+kubectl exec -it mongo-0 -- mongo 
+
+now you can see the node changed to Primary
+
+you can verify 
+
+rs.status()
+
+Now you can insert some data in the primary node then see the same data in secondary node
+
+use test
+db.todos.insert({"title":"Test"})
+
+exit primary node and login to the secondary node
+
+
+kubectl exec -it mongo-1 -- mongo
+
+find the same collection
+
+db.todos.find()
+
+you need to enable the read for this node
+
+rs.slaveOk()
+
+db.todos.find()
+
+now you can see the dame data
+this data trasfer took place help of headless service

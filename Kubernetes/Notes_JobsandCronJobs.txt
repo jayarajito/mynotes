@@ -1,0 +1,155 @@
+https://www.youtube.com/watch?v=cWUbkuzc8dM&list=PLrMP04WSdCjrkNYSFvFeiHrfpsSVDFMDR&index=19
+
+Jobs and CronJObs
+
+How to run a pods only once, not for continuously
+
+for DB Backups and Batch Jobs
+
+
+we can use job and cronjob for run the pod for specific period of time
+
+kind: Job
+
+if the pod is faild to run due to some reason, if you want to retry then specify the limit
+
+backoffLimit:3
+
+default limit is 6
+
+if 3 times also pods not running k8s marked this job is failed and give the error
+
+BackoffLimitExceeded
+
+
+Another properties, is the job is how long run 
+
+activeDeadlineSeconds:50
+
+if the job is run morethan this time, this will mark the job is incomplete and give error
+
+DeadlineExceeded
+
+this take precedence over backofflimit
+
+
+No error in the pod, the job controller checks the number of pod completions
+
+this means pod should complete the job this many times, basically this is similar to replica in deployments
+
+completions:3
+
+when a specified number of completions reached then the job marked as completed
+
+by default the pod will create ony by one sequently
+
+but we can create the pod parrallely by using
+
+parallelism:2
+
+2 pods will create the first time and once completed the another pod will create since we used completions:3
+
+This job will run on one time only
+
+
+Some times we want to run a job on schedueld basics like db backup should take everyday day midnight for that k8s provides another resources cronjob
+
+in the cron job we can give the cron expression, then the job lifecycle is same as above
+
+kind: CronJob
+
+schedule: '* * * * *'
+
+UseCases:
+DB Backups, Log Rotation, Data Processing and many more
+
+once the job is complted the pod status is completed but not running but presnt in the pods list
+
+you can also delete job after few seconds if finished, if job deleted the pod also deleted
+
+ttlSecondsAfterFinished: 60 
+
+Practical:
+
+How to take backup of mongodb database
+
+kubectl get sts
+
+write a k8s job that takes a backup of db
+kind: Job
+spec:
+  backoffLimit: 5
+  activeDeadlineSeconds: 100
+  ttlSecondsAfterFinished: 60 # delete job after 60 seconds if finished, if job deleted the pod also deleted
+
+gothrough the yaml file
+
+kubectl get jobs
+
+kubectl get pods  
+
+check the data is exported to volumes or not
+
+kubectl get pv
+
+kubectl describe pv pvname
+
+type: HostPath
+
+hostPath volumes allow you to access files and directories directly from the host node's file system within your pods. 
+
+hostPath volumes are generally not recommended for production environments
+
+ 
+The job is run only once, so schedule a cron job
+
+kind: CronJob
+
+spec:
+  schedule: "* * * * *" # 0 0 * * * this for mindnight
+  concurrencyPolicy: Allow
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+
+
+
+Cron Job Concurrency Policy:
+----------------------------
+
+cron job creates the job on schedule basics 
+this policy refers to the number of concurent jobs instances that are allwed to run at any given time
+
+by default cronjob will create only one job instance at a time, this means the next job will queed until first one finish
+
+Avilable Options are below
+Allow - This will allow the multiple job instance can run concurrently
+
+Forbid - This not allow new job until first one finish
+
+Replace - Stop the currently running job and create a new job
+
+Default policy is Forbid
+
+
+kubectl get cj
+
+
+you can suspend the cronjob
+---------------------------
+
+you can stop the cron job temporarily to crate a job
+
+kubectl edit cj cjname
+
+or you can use the patch command
+
+kubectl patch cj cjname --patch '{"spec":{"suspend":true}}'
+
+to rollback use false
+
+if we delte the cron job associateed jobs also deleted
+
+kubectl delete cj cjname
+

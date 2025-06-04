@@ -1,0 +1,53 @@
+https://www.youtube.com/watch?v=36qsohuPzMQ&t=572s
+
+
+by default, EC2 instances in different subnets within the same VPC can communicate with each other
+
+VPCs come with a default route table that allows communication within the VPC.
+We can not delete this
+
+Network ACLs and Security Groups:
+While communication is enabled by default, you can use Network Access Control Lists (NACLs) and security groups to control which traffic is allowed or blocked between instances in different subnets. 
+
+
+VPC Peering
+
+VPC1
+Crate Route Table
+While creating we will give only name and VPC
+Subnet
+While creating we will give VPC,name,AZ,CIDR
+Associate Subnet and Route Table
+go to Rote Tables and select one
+go to Subnet Associatoins tab
+Edit subnet association and select the subnet
+Create InterNetGateWay and Associate with VPC
+Create Routes in Route Table
+Edit routes-Add route->Destination is 0.0.0.0 and Target is INGW
+Place the EC2 Instance
+Now Go to the VPC and select the Peering Connections
+Create Peering Connection
+Give Name
+Select a Local VPC to peer with(Requester)
+Select another VPC to peer with(Accepter)
+Account:
+My account or Another account
+Region:
+This Region or Another region
+Select the VPC
+
+Create Peering connection
+Once Create it shows Pending Acceptance
+Destination VPC should Accept
+
+After we need to modify the route table
+Go to route table and edit
+Add route
+In destination put the VPC2 IP CIDR and Target is Peering Connection,select the Peering connection ID
+Save and do for the same revese in VPC2
+
+VPC2
+Crate Route Table
+While creating we will give only name and VPC
+Subnet
+While creating we will give VPC,name,AZ,CIDR

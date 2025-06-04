@@ -1,0 +1,287 @@
+https://www.youtube.com/watch?v=LPy6Q-q1MVQ&list=PLrMP04WSdCjrkNYSFvFeiHrfpsSVDFMDR&index=11
+
+Docker Volumes:
+https://www.youtube.com/watch?v=Hu3j2o2uDIA
+
+If container is deleted the data also deleted which is associated with the contianer
+
+using docker volumes we can persists the data
+
+to delete a container first need to stop
+
+docker stop name
+docker rm name
+docker ps
+
+Create a Volume:
+docker volume create name
+docker volume ls
+docker volume ls -f name=mongo-data
+docker inspect volume name  here you can see the directory path
+
+if not give any volume name, docker will create a random name
+
+docker volume create
+
+you can attach it while run using flag
+-v name:/data/db (this is container path-var/lib/docker/volumes/mongo-data/_data this is stored in docker vm while installing dockker dedsktop this vm will create)
+
+Bind mount - you can use the your local filesystem directory
+-v localpath:data/db
+
+you can not delete the volum if used by any container
+
+docker stop conatinername
+
+docker rm containername 
+
+docker volume rm name
+
+docker volume ls
+
+whenever the container delete, the voule should not delete, we need to delete manualy
+
+
+Docker Networking:
+https://www.youtube.com/watch?v=JWpdm9Ebbr4&list=PLrMP04WSdCjpqUE9chyzDRr0prTjTkbLc&index=5
+
+
+docker pull mongo:4.4.6
+docker images
+
+docker logs containerid
+
+when container created it assigned unique IP address
+
+get the ip address of the container
+
+docker inspect containerid
+
+docker network ls
+
+bridge - you can acces the external resources and containers in same network
+
+host - you can bind directly to the Docker host's network
+
+none - you can not acces any(fully isolated)
+
+none:
+------
+docker run -d --network none alpine
+
+this will exit immediately-if any service is not running in the container that will exited.
+
+the perpose of the container is running the services not running the os
+
+docker run -d --network none alpine sleep 500
+
+docker exec -it containerid sh
+
+ping google.com
+
+this ownt reachable
+
+exit
+
+bridge:
+-------
+if you want to access the containr using name instead of the ip, then we need to create custom bridge network
+
+default bridge netwokr not support to access the container using name
+
+docker network create name --driver bridge
+
+you can not create custom netork for the none and host network
+
+stop all the container
+
+docker stop $(docker ps -a)
+docker rm $(docker ps -a)
+
+host
+-----
+containers which bind directly to the Docker host's network, with no network isolation. 
+
+container which binds directly to port 80 on the Docker host
+
+so port 80 to be available on the Docker host.
+
+
+k8s Volumes:
+
+https://www.youtube.com/watch?v=LPy6Q-q1MVQ&list=PLrMP04WSdCjrkNYSFvFeiHrfpsSVDFMDR&index=11
+
+If the pod is deleted, all the data associated with pod also deleted
+
+using kubernetes voulumes we can persists the data
+
+Sharing the Data
+Persisting the Data
+
+create a monodb deployment
+
+inorder to access the deployment we need a service
+
+data is stored in container, so other container can not  access the data
+
+If container deleted, restartd then the data is loss
+
+kubectl get pods
+
+kubectl exec -it podname -- /bin/bash
+
+ps aux
+kill psid
+
+Kubernetes Volumes Types:
+-------------------------
+
+emptyDir: storing the data in pod level
+---------
+if container restarted still the data is accesible
+
+in deployment yaml file declare the 
+volumes: under the spec
+
+ - name: volumename
+   emptyDir: {}
+
+under the continer section mount the volume
+volumeMounts:
+ -mountPath: /data/db
+  name: volumename
+
+
+the volume stored under the node where the pod deployed
+
+this data not shared with other pods, also if restarted or delted the pods and again data loss
+
+
+hostPath:
+---------
+store the data in the node level
+
+in deployment yaml file declare the 
+volumes: under the spec
+
+ - name: volumename
+   hostPath:
+      path: /data
+
+same problem for if we have multiple nodes
+
+
+Persistant Volumes: External storage
+-------------------------------------
+
+kubernetes offers 3 components to persists the data
+
+Persisten Volumes
+Persistent Volume Claims
+Storage Classes
+
+Persistent Volumes
+------------------
+PV is available entire cluster not only in namespace
+
+Persistent volumes is a k8s resource and it can be created with yaml file
+kind: PersistentVolume
+
+It will takes the actual storage frm ebs or nfs
+
+check the api version
+
+kubectl api-resources | grep Persistent
+
+
+we need to provide capacity and accessModes and type(ebs,local,nfs,azure disk..)
+
+ReadWriteMany - if your pods running multiple nodes
+
+ReadWriteOnce - if your all pods running single node
+
+ReadOnlyOnce  - same but no write access
+ReadOnlyMany  - same but no write access
+
+ReadWriteOncePod -- across the cluster only one pod can acces
+
+local:
+   path: /storage/data
+
+
+apply
+kubectl get pv
+
+Persistent Volume Claims
+-----------------------
+PVC is available only in namespace where our pod is running
+
+we created pv but if want to use then cliams is coming to the picture
+
+
+PersistentVolumeClaim is k8s anoter resouces menction in Kind:
+
+we need to provide accessmodes(match with the pv), resources, storageClassName
+
+
+then you need to mection this cliam name in the deploymet yaml file under volumes 
+
+in deployment yaml file declare the 
+volumes: under the spec
+
+ - name: volumename
+   persistentVolumeClaim:
+      claimName:cliamname
+
+kubectl get pvc
+
+kubectl get pv
+Now this status changed available to Bound
+
+if there is any issue debug the issue describe the pods and look under events
+
+If a user deletes a PVC in active use by a Pod, the PVC is not removed immediately. same for pv, pv is associated with pvc
+
+first delete the pods deployment
+
+now pv status is Released, there is no pvc exist
+
+If any pv status is released then this can not used by any other pvc
+
+So you need to make the pv available status
+
+so delete the pv and re-create using apply
+
+pv
+pvc
+deployment
+
+StorageClass:
+-------------
+There is way for cretae a pv dynamically
+StorageClass will create a pv
+
+Storage Class is available entire cluster not only in namespace
+
+this is another k8s resources
+Kind:StorageClass
+
+you need to menction provisioner, how to create a pv
+
+VolumeBindingMOde:
+Immediate(pv created immediately when the pvc is created)
+
+WaitForFirstConsumer(pv not created until the pvc used by the one of the pod)
+
+reclaimPolicy:
+Delte(if pvc deleted then the pv also deleted-only delte the pv resource not the actual data)
+
+Retain(even pvc is deleted the pv is not deleted)
+
+kubectl get sc
+
+standard-default storage class is always created when the cluster is created
+
+If you not menctioned any sc in the pvc this will take
+default VolumeBindingMOde: immediate
+default reclaimPolicy:delete
