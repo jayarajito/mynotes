@@ -1,0 +1,165 @@
+https://www.youtube.com/watch?v=gd7BXuUQ91w&t=7s
+
+connect to ssh
+ssh username@ip
+
+ls
+
+pwd
+
+cd
+
+touch
+
+echo
+
+nano
+
+vim
+
+cat 
+
+shred filename  
+it will make the file content all with noise charactrs, used to permenaant delte for secrtet data
+
+mkdir
+
+cp
+
+mv
+
+rm
+
+rmdir
+
+ln -s sourcefile linkfile
+
+clean
+
+whoami
+
+sudo 
+
+sudo useradd username
+
+It wont ask any passsword, immediatly cteate user
+Requires additional parameters
+Does not create a home directory for the new user by default 
+-p for password
+-m for directory
+
+sudo adduser username 
+this will to give password and more details
+Adds a user with standard settings
+higher level and not available on all Linux distributions
+
+sudo usermod -aG sudo [name-of-user]
+
+chmod
+for permission
+
+su username for swtch user
+
+exit 
+
+sudo passwd username  -change the userpassword
+
+
+sudo apt -Advanced Packaging Tool
+
+man
+
+whatis  -it shows sinle line output about cmds
+
+which -it shows installed the software
+
+whereis -it shows location of the source and manual
+
+
+wget
+
+curl
+
+zip
+
+unzip
+
+less   one page at a time
+
+head  begining of the file
+
+tail  end of the file
+
+cmp  compare file
+
+diff it sows exact different
+
+sort -sort alphapetically
+
+find - find the files/dir
+
+chown - change owenership
+
+ifconfig -ipaddress
+
+clear
+
+grep
+
+awk '{print $2}'
+
+ping
+
+traceroute
+
+netstat -tulpn
+
+iptables
+
+sudo ufw allow 80
+
+uname -ar  -it shows the os name and kernel
+
+cal  -dispaly the calender default not availale
+
+free  -it shows the memory details
+
+df -H - how much disk space available
+
+ps -aux
+
+top
+
+htop
+
+kill -9 psnumber forcefully kill
+
+systemctl -used to stop and start the srvices
+
+Systemd is the underlying system that manages services, processes, and resources.
+
+Systemctl is a command-line tool used to interact with and control systemd services and components.
+
+
+history
+
+sudo reboot - reboot the system
+
+sudo shutdown -shudtownd
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
