@@ -1,0 +1,104 @@
+Anisble is Agentless
+Control Node - Ansible Installed
+Manage Nodes = Other Machines (Python required)
+Ansible Takes the yaml file and convert to Python code
+
+Passwordless Authentication
+
+sudo vi /etc/ssh/sshd_cofig.d uncomment the PasswordAuthenticaton yes 
+
+sudo ssh-copy-id -f "-o IdentityFile test.pem" ubuntu@54.153.78.49
+
+How control node understand the manage nodes
+
+Inventory is a file here we can put the nodes name
+This file location can be anywhere
+This file is hart of the Ansible
+
+we can create 2 ways
+inventory.ini
+inventory.yaml
+
+inside a file put the instance login
+
+user@ip
+
+adhoc commands
+
+ansible -i inventory.ini -m ping all
+ansible -i inventory.ini -m shell -a "apt install openjdk" all
+ansible -i inventory.ini -m ping ubuntu@ip
+
+You can group the server as per needed like app server, db server
+
+[app]
+servers
+
+[db]
+servers
+
+ansible -i inventory.ini -m ping db
+
+Anible Playbook
+Start with 3 dash ---
+
+Running Ansible Playbook
+ansible-playbook -i inventory.ini filename.yaml
+
+
+state absent means uninstall
+state present means install
+
+
+Ansible Roles
+split the different section into folder inside folder you can write individual yaml
+ansible-galaxy role init nameoftherole
+this will create a role and inside role few foldes and file created like 8
+README.md
+files  
+templates -used to put the dynamically changing file
+vars
+tasks
+tests
+meta
+defaults - used for variables, but here default values present
+handlers - used for tasks but only executed upon a perticular actions, in the main task you want to notify
+
+you can upload this role to Ansible Galaxy like docuker registry
+you can share across organazation and outside of the organazation
+
+
+How to install roles
+
+ansible-galaxy role install bsmeding.docker
+
+import roles
+ansible-galaxy import githubusername repositoryname --token 445454
+
+Now this will imported in you Galexy Under roles in Role Namespaces
+
+
+
+We can create cloud resouces using Ansible Collections
+
+
+apart from the built in module others are collections
+
+collection has combination of modules and roles
+
+ansible-galaxy collection install amazon.aws
+in control node needs to be installed boto3 python module
+
+to secure the api key the ansible has built in vault
+
+ansible-vault create group_vars/all/pass.yml --vault-password-file vault.pass
+
+ansible-playbook -i invontary.ini create_ec2.yaml --vault-password-file vault.pass
+
+
+we can declare variables in multiple places almost around 22
+
+you can access variable using {{ type }}
+
+
+

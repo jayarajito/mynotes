@@ -1,0 +1,45 @@
+PowerShell ISE (Integrated Scripting Environment)
+
+get content from the file
+
+Get-Content hosts.txt
+
+you can store as variable
+$hosts = Get-Content hosts.txt
+
+when you type this variable, then it will display
+
+$hosts
+
+
+Azure Powerrshell
+
+Check Pwersehll version
+
+$PSVersionTable.PSVersion
+
+Determine if you have the AzureRM PowerShell module installed
+
+Get-Module -Name AzureRM -ListAvailable
+
+Check the PowerShell execution policy:
+
+Get-ExecutionPolicy -List
+
+
+Set the PowerShell execution policy to remote signed:
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+
+Install
+
+Install-Module -Name Az -Repository PSGallery -Force
+
+Update
+
+Update-Module -Name Az
+
+# Login to Azure
+
+Connect-AzAccount

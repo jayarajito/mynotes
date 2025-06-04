@@ -1,0 +1,54 @@
+https://www.youtube.com/watch?v=PYtgemvmHcU
+
+AWS 3 Tier Arcitecture Model
+
+Any application has 
+Front End
+Backend
+Database
+
+then it is called 3 tire application
+
+Some application database is not required so 2 tire application
+
+watch day 24 EKS 2048 2 tire application
+
+
+1. First create a VPC
+secure one application project to anotehr projects
+
+2. Split 3 subnets for 3 apps
+
+for fronend use the Auto Scalling Group for deploying application to multiple ec2 instance, also 2 diffrent availabiliyt zones 
+
+for backend also same
+
+
+3. for database you can use RDS services
+use primary RDS and secondary RDS
+
+
+when users requst this goes to route53 and this goes to CDN and here goes to the ELB(public subnet)
+
+from elb the requst goes to any one of the ec2 instances
+
+This ec2 instance cordinated with ALB 
+
+From the ALB the requst will goes to one of the backend ec2 instances
+
+from the backend ec2 instance the requst goes to the primary RDS
+
+for demo
+
+https://www.showwcase.com/article/35459/building-a-resilient-three-tier-architecture-on-aws-with-deploying-mern-stack-application
+
+create 2 vpc for 2 diffrent regoins for diaster recovery
+
+
+we should not tell like this 3 tire app arcitecture when uisng the k8s 
+
+if you using the ec2 instances then we can tell
+
+If Jd describe container then tll k8s architecture
+
+IF Jd describe application on ec2 instance then tell this architecture

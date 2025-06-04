@@ -1,0 +1,9 @@
+In Ubuntu, "ufw" stands for "Uncomplicated Firewall," which is a user-friendly command-line tool used to manage the system's firewall settings, providing a simpler way to configure rules compared to the underlying "iptables" system; essentially, it acts as a front-end for managing firewall rules on Ubuntu machines, allowing users to easily allow or deny traffic on specific ports with simple commands. 
+Key points about UFW:
+Function: It simplifies firewall management by offering a straightforward interface for common firewall configurations. 
+Default on Ubuntu: UFW is included by default in all Ubuntu distributions. 
+Command-line access: Users interact with UFW through simple commands in the terminal. 
+Underlying technology: UFW utilizes the "iptables" system to implement firewall rules. 
+
+
+https://documentation.ubuntu.com/server/how-to/security/firewalls/index.html

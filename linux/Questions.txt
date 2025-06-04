@@ -1,0 +1,126 @@
+1. Walk Through CICD pipeline all the staages
+
+2. Why we are using HELM Chart,what is, how does works.
+
+3. Without Docker we are able to create a HELM Chart
+
+4. What is Docker?
+
+5. Write a manifist file for the deployment?
+
+6. difference between rolling update and blue green deployment and canary deployment
+
+7. 3Tier architecture Network workflow
+
+8. Difference b/w NACL and Secuirty Group?
+NACLs (Network Access Control Lists) and Security Groups in AWS control network traffic, but at different levels.
+NACLs act as a firewall for subnets, while Security Groups act as a firewall for individual instances.
+NACLs are stateless, requiring explicit rules for both inbound and outbound traffic, while Security Groups are stateful, allowing traffic based on previous responses.
+NACLs Denies traffic by default (unless explicitly allowed)
+Security Groups Allows traffic by default (unless explicitly denied)
+
+9. Explain about VPC and how will create?
+
+10. Write a Python script for print the sum value of 1 to 100
+
+11. Ansible whcih machanism it work push based or pull based?
+
+12. Differne b/w tcp and udp
+TCP and UDP are both transport layer protocols, but they differ in how they handle data transmission. 
+TCP is connection-oriented, reliable, and guarantees ordered delivery of data packets.
+TCP establishes a connection between the sender and receiver before transmitting data. 
+Examples: HTTP (web browsing), FTP (file transfer), SMTP (email). 
+ 
+UDP is connectionless, unreliable, and prioritizes speed and efficiency over reliability.
+UDP does not require a connection to be established before transmitting data. 
+Examples:
+DNS (Domain Name System), VoIP (Voice over IP), online gaming.  
+
+13. Differene b/w telnet and ssh?
+Telnet and SSH are both network protocols for remote access, but they differ significantly in security.
+Telnet is an older protocol that transmits data in plain text, making it insecure, while SSH uses encryption to secure the data transfer and authentication, making it much more secure. 
+
+14. What is the sticky bit-you have to create a folder in such way x number of people keep thier file in that perticular folder but they can  not delte other users file in that pertuculaer folder
+
+https://www.youtube.com/@shawnp0wers/videos
+
+The sticky bit in Linux is a special permission that protects files within a directory.
+It's often used in public writable directories like /tmp to prevent users from deleting or renaming each other's files. 
+
+The sticky bit ensures that only the file owner, the directory owner, or a privileged user (like root) can remove or rename a file within the directory. 
+
+
+
+chmod +t dirname   Set the sticky bit
+chmod 1777 dirname
+
+chmod -t diername  Remove the sticky bit
+chmod 0777 dirname
+
+sticky bit only for the directory, this is zero effect on the files
+
+The sticky bit is represented by a "t" in the symbolic representation of file permissions (e.g., rwxr-xr-t where the "t" is the last character of the other permissions). 
+
+15. Serverless Architecture use casses
+
+16. How to secure your infrastructure
+
+
+zombie process(also called a defunct process)
+
+https://www.youtube.com/watch?v=dl0e6GxO9DI
+https://www.youtube.com/watch?v=WFIseYoFEAY
+
+A zombie process is a process that has completed its execution but still exists in the process table because its parent process hasn’t read its exit status.
+It doesn’t consume CPU or memory but can fill up the process table and cause issues if many zombie processes are present.
+limiting the creation of new processes.
+the child process is referred to as a zombie process. 
+
+https://www.youtube.com/watch?v=USOFD0W0hQE
+https://www.youtube.com/watch?v=iu1m1IPm5UM&pp=ygUsaG93IHRvIG1ha2Ugem9tYmllIHNlc3Npb24gaW4gbGludXggYW5kIGtpbGw%3D
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main()
+{
+// fork() creates child process identical to parent
+
+int pid = fork();
+
+//if pid is grater than 0 than it is parent process
+
+//if pid is 0 then it is child process
+
+//if pid is -ve, it means fork() failed to create child process
+
+//parent process
+if (pid >0)
+sleep(300);
+
+//child process
+else
+ exit(0);
+return 0;
+}
+
+
+
+Example:
+
+Identify zombie:
+ps aux | grep -w Z
+
+Find parent:
+ps o ppid <zombie_PID>
+
+Kill parent:
+kill -9 <parent_PID>
+
+You can send a signal (like SIGCHLD) to the parent process, which might cause it to reap the zombie. 
+
+kill -s SIGCHLD <parent_PID>
+
+If still the session is not killed then reboot the systems

@@ -1,0 +1,88 @@
+1. docker run
+
+docker run -d -p 80:80 nginx
+
+2. docker ps
+
+docker ps -a
+
+3. docker images
+
+docker images
+
+4. docker pull
+
+docker pull ubuntu:latest
+
+5. docker stop
+
+docker stop <container_id>
+
+6. docker rm
+
+docker rm <container_id>
+
+7. docker rmi
+
+docker rmi ubuntu:latest
+
+8. docker logs
+
+docker logs <container_id>
+
+9. docker exec
+
+docker exec -it <container_id> bash
+
+10. docker-compose up
+
+docker-compose up -d
+
+11. Docker Build
+
+docker build -t custom_image_name .
+
+12. Docker Network
+
+docker network ls
+docker network create my_network
+
+
+
+The contents of a Dockerfile describe how to create and build a Docker image, 
+while docker-compose is a command that runs Docker containers based on settings described in a docker-compose.yaml file.
+
+
+
+
+
+docker network create -d bridge my-net
+docker run --network=my-net -itd --name=container3 busybox
+
+
+
+bridge	The default network driver.
+
+By default, bridge networks are private to the host, meaning external systems can't directly access the containers unless you expose ports using -p or -P.
+
+host	Remove network isolation between the container and the Docker host.
+
+none	Completely isolate a container from the host and other containers.
+
+overlay	Overlay networks connect multiple Docker daemons together.
+
+ipvlan	IPvlan networks provide full control over both IPv4 and IPv6 addressing.
+
+macvlan	Assign a MAC address to a container.
+
+
+
+
+In Docker, bind mounts and volumes are both used to share files between the host machine and a container, but they differ in how they handle the data persistence and management. Bind mounts directly link a host directory to a container directory, while volumes create a directory within Docker's storage directory, allowing for easier management and portability even if the container is removed or stopped.
+
+Multistage Dockerfile
+Reduced Image Size
+
+
+
+

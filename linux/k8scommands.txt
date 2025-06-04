@@ -1,0 +1,60 @@
+Kubectl: Kubernetes command-line tool.
+
+kubectl get pods: List all pods in the current namespace.
+kubectl get nodes: List all nodes in the cluster.
+kubectl get services: List all services in the current namespace.
+kubectl get deployments: List all deployments in the current namespace.
+
+Namespaces
+
+kubectl create namespace <name>: Create a new namespace.
+kubectl get namespaces: List all namespaces.
+kubectl config set-context --current --namespace=<namespace>: Set the default namespace for the current context.
+
+Pods:
+
+kubectl describe pod <pod_name>: Get detailed information about a pod.
+
+kubectl logs <pod_name>: View logs for a specific pod.
+
+kubectl exec -it <pod_name> -- <command>: Execute a command inside a running pod.
+
+
+Deployments:
+kubectl create deployment <name> --image=<image_name>: Create a new deployment.
+
+kubectl get deployments: List all deployments.
+
+kubectl scale deployment <name> --replicas=<count>: Scale a deployment to the specified number of replicas.
+
+Services:
+
+kubectl expose deployment <name> --port=<port> --target-port=<target_port> --type=<type>: Create a new service.
+
+kubectl get services: List all services.
+
+kubectl delete service <name>: Delete a service.
+
+
+Ingress: Exposes HTTP and HTTPS routes from outside the cluster to services within the cluster.
+(Assuming you have an Ingress Controller installed): 
+
+kubectl apply -f <ingress_yaml_file>: Create an ingress resource.
+
+kubectl get ingress: List all ingress resources.
+
+
+Configurations:
+1. ConfigMaps: Store configuration data separately from the container image.
+kubectl create configmap <configmap-name> --from-file=<path-to-file>: Create a ConfigMap from a file.
+kubectl get configmaps: List all ConfigMaps.
+2. Secrets: Similar to ConfigMaps but designed for sensitive information.
+
+kubectl create secret generic <name> --from-literal=<key>=<value>: Create a Secret.
+kubectl get secrets: List all Secrets.
+
+
+
+
+1. kubectl rollout restart: This command restarts a deployment, which in turn restarts all pods controlled by that deployment. It's a graceful restart process, minimizing downtime. 
+2. kubectl delete pod: Deleting a pod directly will cause Kubernetes to create a new pod to replace it, effectively restarting the application

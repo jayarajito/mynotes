@@ -1,0 +1,510 @@
+To check the kernel version in Linux, you can use the uname -r command, the cat /proc/version file, or the hostnamectl command. You can also use the dmesg command
+
+
+    Print certain system information.  With no OPTION, same as -s.
+
+       -a, --all
+              print all information, in the following order, except omit -p and -i if unknown:
+
+       -s, --kernel-name
+              print the kernel name
+
+       -n, --nodename
+              print the network node hostname
+
+       -r, --kernel-release
+              print the kernel release
+
+       -v, --kernel-version
+              print the kernel version
+
+       -m, --machine
+              print the machine hardware name
+
+       -p, --processor
+              print the processor type (non-portable)
+
+       -i, --hardware-platform
+              print the hardware platform (non-portable)
+
+       -o, --operating-system
+              print the operating system
+
+       --help display this help and exit
+
+       --version
+              output version information and exit
+
+uname -r
+
+cat /proc/version
+
+hostnamectl
+
+
+sudo dmesg
+
+uname -a
+uname -m    it shows archit
+
+lscpu Command – Show CPU Architecture Information. ...
+cat /proc/cpuinfo – Show CPU Processor Info. ...
+nproc Command – Show Processing Units or CPU Cores. ...
+
+
+top -i
+Copy
+The system hides all the idle processes, making it easier to sort through the list.
+
+after top command if you press the 1 it shows the all available cpu usage
+
+htop
+
+ps -ef | grep jenkins
+
+ps aux
+
+
+ps -eo pid,user,state,cmd --sort=-%cpu | grep " R "
+
+Monitorring system resurces
+
+ps aux --sort=-pcpu | head -11 
+ps aux --sort=-pmem | head -11 
+
+To check Total memory usage
+
+free
+
+free -m  you can see in mb g for gb
+
+
+you can check the system uptime using
+
+
+uptime
+
+htop   
+
+this will give you more option if you type u it will show the user group then you can see the that user usage
+
+60 linux command in 15 miniutes
+https://www.youtube.com/watch?v=gd7BXuUQ91w
+
+
+
+The Linux tail command is a command-line utility that prints data from the end of a specified file or files to standard output. The utility provides an easy way to quickly see file updates in real time, as new data is usually added to the end of a file.
+
+tail [options] [file]
+
+By default, tail displays the last 10 lines of each [file] to standard output,
+
+tail filename
+
+Print Specific Number of Lines
+
+tail -n 5 filename
+
+head command, which displays the beginning of a file.
+
+head filename
+
+To print the entire file contents, use the cat command.
+
+cat filename
+
+
+
+To check system logs in Linux,
+
+
+Enter cd /var/log to view system logs 
+
+Type ls to see the logs in the directory 
+
+Use commands like less, grep, or vi to search the logs 
+
+Use the tail command to view the latest changes from a file in real time 
+
+
+Use the journalctl command to view logs managed by systemd 
+
+
+Use the strace command to trace system calls and signals 
+
+
+less command
+
+less is a command that displays file contents or command output one page at a time in your terminal. 
+
+less your-file-name
+
+ps -ef | less
+
+
+To see line numbers on each line, use the -N option:
+
+
+less -N your-file-name
+
+
+spacebar	Move down one page.
+b		Move up one page.
+g		Go to the first line.
+G		Go to the last line.
+q		Quit less
+
+
+Logs file
+
+Some important log files include: 
+/var/log/syslog: Tracks errors related to application services and messages logged when the system boots up 
+/var/log/dmesg: Contains messages from the kernel ring buffer, which include information about hardware components, drivers, and kernel initialization 
+/var/log/httpd: Contains error_log and access_log files of the Apache httpd daemon 
+/var/log/kern.log: Stores kernel events, errors, and warning logs 
+
+
+strace - Trace System calls and Signals
+strace is a diagnostic tool in Linux. It intercepts and records any syscalls made by a command. 
+Additionally, it also records any Linux signal sent to the process. We can then use this information to debug or diagnose a program. 
+
+Using Strace to Trace Linux Syscalls
+
+strace pwd
+
+Attaching strace to Running Process
+
+strace -p PID
+strace -p 50
+
+
+
+How to change shell timeout
+
+Open the configuration file:
+For individual user: Use a text editor to open your .bashrc file located in your home directory (~/.bashrc).
+For all users: Edit the /etc/profile file with root privileges.
+
+
+
+2. Add the TMOUT line:
+
+# Inside your .bashrc file
+
+export TMOUT=1800  
+
+# This sets a 30-minute timeout (1800 seconds) 
+
+If you give 1800 seconds in profile but only 18 seconds in ~/.bashrc, this will take place
+
+
+
+tee Command and Piping
+
+The tee command reads standard input (stdin) and writes it to both standard output (stdout) and one or more files.
+
+Use the tee command to view your output immediately and at the same time, store it for future use.
+
+ifconfig | tee example.txt
+
+Warning: If the file used in the command already exists, tee overwrites the previous contents of the file.
+
+
+Use Append to File
+
+[command] | tee -a [filename]
+
+echo "jayaraj" | tee jay.txt
+
+echo "jayaraj1" | tee -a jay.txt
+
+
+Links
+
+There are two types of links :
+
+Soft Link or Symbolic links
+Hard Links
+
+Basically hard link increases reference count of a location while soft links work as a shortcut (like in Windows) 
+
+For example, if we have a file a.txt. If we create a hard link to the file and then delete the file, we can still access the file using hard link. But if we create a soft link of the file and then delete the file, we can’t access the file through soft link and soft link becomes dangling. 
+
+
+The size of the soft link is equal to the length of the path of the original file we gave. 
+
+Reference Type: Soft links are references to the pathname of a file or directory, while hard links are references to the inode of a file.
+
+Behavior on Original File Deletion: When the original file is deleted, a soft link pointing to it becomes invalid (dangling), whereas a hard link remains valid as it points directly to the inode of the file.
+
+
+Cross-Filesystem Linking: Soft links can point to files or directories across different filesystems because they refer to pathnames. Hard links can only be made to files (not directories) within the same filesystem, as they link directly to inodes.
+
+Visibility: When listing directory contents with ls -l, soft links show the path to which they point using an arrow notation (->), whereas hard links appear as regular files, showing no indication that they are links.
+
+
+Softlink Create
+
+ln  -s [original filename] [link name]
+
+touch mysoftorg
+
+ln -s mysoftorg mysoftorglink  
+
+
+Hardlink Crete
+Creating a hard link in Linux does not require any special options with the ln command. The syntax is:
+
+ln target_file link_name
+
+touch myordorg
+
+ln myordorg myordorglink
+
+
+
+Remove link same as removing files
+rm -rf filename
+
+INodes
+
+In Linux, an inode, or index node, is a data structure that stores information about files and directories. Inodes are unique identifiers for each file or directory in a filesystem. 
+
+What does an inode store?
+File type: Whether the file is a regular file, directory, or device 
+File size: The size of the file in bytes 
+File permissions: The access mode for the file, such as read, write, or execute 
+File ownership: The owner of the file, including the user ID (UID) and group ID (GID) 
+File location: The disk block locations of the file's data 
+
+
+
+ls -i
+df -i
+
+
+df -i /dev/sda1
+ls -i Creating_volume_groups
+ls -idl my_articles/
+
+df -T  it shows file system type
+
+while attahce the volume that volume should be dame availabiliyt zone
+Weile attahing we need to give device name
+
+lsblk  it shows disk and partigion
+
+creaate a partiion
+sudo fdisk /dev/xvdp
+
+next command is
+
+p - print the partition table you can use m for help to see all command
+
+then
+
+n - new partition
+
+select next p for primary
+then give partion number 1-4 
+
+default sector selecction
+
+next p
+
+the w  for save it
+
+Now this will show in lsblk
+
+without formating we can not mount
+
+example create a direcroty and mount it and it wont allow
+
+suod mkdir data
+sudo mount /dev/xvdp data
+
+format means creating the filesytem
+
+sudo mkfs -t xfs /dev/xvdp1
+
+now mount
+
+sudo mount /dev/xvdp1 data
+
+now this will show on df command
+
+df -h
+
+
+Now need to persistant, after reboot also
+
+sudo vi /etc/fstab
+
+
+we need uid
+blkid /dev/xvdp1
+/dev/xvdp1: UUID="d1a85484-a239-488f-b94d-8497850ce548" BLOCK_SIZE="512" TYPE="xfs" PARTUUID="706cb75a-01"
+
+
+sudo file -s /dev/xvdp
+
+sudo lsblk -f
+
+
+sudo cp /etc/fstab /etc/fstab.orig
+
+
+sudo vim /etc/fstab
+
+
+UUID=d1a85484-a239-488f-b94d-8497850ce548  /data  xfs  defaults,nofail  0  2
+
+sudo systemctl daemon-reload
+
+sudo umount /home/ubuntu/data
+
+sudo mount -a
+
+sudo mount /dev/xvdp1 /data
+sudo systemctl daemon-reload
+
+AS per AWS
+lsblk
+
+sudo file -s /dev/xvdp1
+
+
+sudo lsblk -f
+
+sudo umount /home/ubuntu/data
+
+sudo mkfs -t xfs /dev/xvdp
+
+sudo mkdir /mydata
+
+sudo mount /dev/xvdp /mydata
+
+no time still proble deleteing
+
+
+
+
+Secure Sockets Layer (SSL) is an older encryption protocol, while Transport Layer Security (TLS) is a more modern and secure replacement. Both SSL and TLS encrypt data sent over the internet to protect it from hackers and eavesdroppers
+
+
+
+Install software
+
+Option 1: dpkg Command
+
+sudo dpkg -i [package path]
+
+sudo dpkg -i ~/Downloads/htop_3.3.0-4build1_amd64.deb
+
+Option 2: apt Package Manager
+
+sudo apt install [package path]
+sudo apt install ~/Downloads/htop_3.3.0-4build1_amd64.deb
+
+
+Ubuntu Software Center Install for GUI installaition
+
+
+# sudo apt-get update && apt-get upgrade -y
+
+E: Could not open lock file /var/lib/dpkg/lock-frontend - open (13: Permission denied)
+E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), are you root?
+
+
+
+# sudo apt install gnome-software
+
+
+
+
+List Commands Used in the Terminal Session
+
+history
+
+Limit the Number of Entries
+
+history 5
+
+
+Search Commands in History
+
+history | grep "ls"
+
+
+In winsows enviornent vaiable
+
+set varname		Display the value of the variable
+set varname=value	Set or change the value of the variable (Note: no space before and after '=')
+set varname=		Delete the variable by setting to empty string (Note: nothing after '=')
+set			Display ALL the environment variables
+
+For set in Powershell
+Set-Variable SUBSCRIPTION_ID=455a0123-6dde-45ff-bad7-4c1b39323cc9
+
+List All Environment Variables
+set
+
+Poweshell
+Get-ChildItem Env:
+
+
+Check A Specific Environment Variable
+
+echo %[variable_name]%
+echo %SUBSCRIPTION_ID%
+
+Powershell
+echo $Env:[variable_name]
+echo $Env:SUBSCRIPTION_ID
+
+
+Ubuntu Upgrade Release
+There are 2 types of Ubuntu releases: Interim and LTS. Each Ubuntu LTS is maintained for 10 years total: 5 years of standard support + 5 years of ESM. Interim releases are maintained for 9 months. Expanded Security Maintenance (ESM)
+
+Ubuntu supports the ability to upgrade from one LTS to the next in sequential order. For example, a user on Ubuntu 16.04 LTS can upgrade to Ubuntu 18.04 LTS, but cannot jump directly to Ubuntu 20.04
+
+
+latest one
+                                Released End of Standard Support	End of Ubuntu Pro Support	End of Legacy Suppor
+24.10 (Oracular Oriole)
+24.04 LTS (Noble Numbat)	Apr 2024	Apr 2029	Apr 2034	Apr 2036
+
+
+To upgrade, run the following commands:
+
+
+sudo apt update
+sudo apt upgrade
+
+
+Upgrade the system
+
+sudo do-release-upgrade
+
+
+
+reload the user profile using source command
+
+. is a bash builtin and a synonym for source          antonym
+
+. ~/.profile
+source ~/.bashrc
+
+
+
+To check if Apache is running in Linux, you can use the 
+systemctl status apache2      command on Debian/Ubuntu systems or 
+systemctl status httpd        command on RHEL/CentOS/Fedora systems.
+
+ps aux | grep httpd or 
+
+ps aux | grep apache
+
+Check a specific port number open or not
+
+sudo lsof -i:80

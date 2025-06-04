@@ -1,0 +1,42 @@
+ provides a complete range of Electricity Meters and solutions
+Genus Power Infrastructures Ltd
+
+E.	Key Skills
+•	Hands on with Linux and Windows Operating System, Application services with troubleshooting skills
+•	Basics of Database monitoring and management - Storage space, Services, back-ups, performance parameters
+•	Troubleshooting skills on Servers, IIS/Apache, Queues, Logs, configurations of servers
+•	Troubleshooting of communication network and devices through generic tools
+•	IT network and Infra knowledge - IP configurations, Network monitoring tools, troubleshooting by monitoring events, Logs
+•	Concepts of Webservers, Services, Security keys, SSL Certificates, https, Tracert, switches, LAN/WAN
+
+
+B.	Job Objective
+Deployment support analytical Engineer to reduce TAT for customer deployment issues by acting as bridge between L1 and L3 teams, providing resolution through tools/technologies. System deployment incudes environment with Linux, Window servers, various communication networks, meters, HES, MDMS and mobile applications.
+
+
+C.	Primary responsibilities
+•	Proficiency in installing & troubleshooting of servers-Linux, Windows
+•	Ability to keep track of changes/deviations done during deployments and ensure to in-built the same for future deployments.
+•	Good communication skills to articulate deployment scenarios and co-ordinate with Cloud partners.
+•	Good analytical skills to troubleshoot deployment issues on Cloud/On premise Data centres.
+•	Continuous learning attitude to grasp multiple products, technologies, and changes.
+•	Ability to understand logs, events, and error details from servers & network infra.
+•	Good documentation skills to create Infra deployment design and technical requirement docs.
+
+Any other additional responsibility could be assigned to the role holder from time to time as a standalone project or regular work. The same would be suitably represented in the Primary responsibilities and agreed between the incumbent and Management.
+
+
+In the context of smart metering, "HES" stands for "Head End System," which is a communication hub that collects raw data from smart meters, while "MDMS" stands for "Meter Data Management System," which processes, stores, and analyzes that data to enable accurate billing and efficient utility management; essentially, HES gathers the data, and MDMS manages and utilizes it. 
+
+Key points about HES and MDMS:
+
+HES function:
+Acts as a gateway, receiving meter readings directly from smart meters via communication networks.
+
+MDMS function:
+Takes the raw data received from HES, cleanses it, validates it, and performs necessary calculations to prepare it for billing and analysis purposes.
+
+
+ 
+
+

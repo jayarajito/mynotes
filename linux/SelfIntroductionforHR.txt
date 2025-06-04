@@ -1,0 +1,41 @@
+Self-Introduction for HR Induction
+Good [Morning/Afternoon], everyone.
+
+My name is Jayaraj Narayanan, and I’m joining as a DevOps/System Engineer. I bring 4.2 years of experience in DevOps, Cloud Engineering, and Systems Administration.
+
+In my previous role at Anthology International, I worked extensively on automating infrastructure with Terraform and Ansible across AWS and Azure environments. I implemented CI/CD pipelines using Jenkins and GitHub Actions, containerized applications with Docker, and managed Kubernetes clusters. I also used monitoring tools like Grafana, Prometheus, and CloudWatch to ensure system reliability.
+
+I hold a Master’s in Computer Applications and am certified in Microsoft Azure Administrator (AZ-104) and Azure Fundamentals (AZ-900). I’ve also completed a DevOps Master’s Program, enhancing my skills in tools such as Jenkins, Git, SonarQube, Argo CD, and scripting with Python and Bash.
+
+I’m enthusiastic about contributing to scalable and secure infrastructure solutions and am excited to collaborate with the team. I look forward to learning and growing with you all.
+
+Thank you!
+
+
+
+Hi everyone, I’m Jayaraj Narayanan.
+I’ve joined as a DevOps/System Engineer with over 4 years of experience in automating infrastructure, CI/CD pipelines, and managing cloud environments on AWS and Azure.
+
+In my last role at Anthology International, I worked with tools like Terraform, Jenkins, Docker, and Kubernetes, and implemented monitoring with Grafana and Prometheus. I’m also Azure certified (AZ-104, AZ-900) and passionate about building reliable, scalable systems.
+
+Excited to be here and looking forward to working with you all!
+
+
+
+
+
+I'm Sachin Dilip Madan, a Data Scientist with over three years of experience as a Machine Learning Engineer. In my role, I've been responsible for various critical tasks, including data validation, thorough data cleaning, exploratory data analysis, feature engineering, and the training and evaluation of machine learning models. Outside of work, I enjoy playing cricket and listening to music.
+
+
+
+Hi everyone, 
+I’m Jayaraj Narayanan.
+I’ve joined as an Associate Consultant with over 4 years of experience in automating infrastructure, CI/CD pipelines, and managing cloud environments on AWS and Azure.
+In my last role I worked with tools like Terraform, Jenkins, Docker, and Kubernetes, and implemented monitoring with Grafana and Prometheus. 
+I’m also Azure certified (AZ-104, AZ-900) and passionate about building reliable, scalable systems.
+Outside of my work, I enjoy traveling to new places and spending time with my family.
+
+I am excited to be here and looking forward to working with you all!
+
+Regards,
+Jayaraj

@@ -1,0 +1,561 @@
+1: Briefly explain Apache Web Server.
+ 
+Answer:
+ Apache Web Server is one of the most secure, powerful and popular open source HTTPServers. It can be used to host anything from personal web sites to corporate domains.
+
+2: You see "connection reset by peer" in error log. What could be the reason for this?
+ 
+Answer:
+ If the end user terminates the connection when the server response was being formed or was being transferred, we see "connection reset by peer" in the error log.
+
+
+3: What type of IP is required for Apache Web Server to host our website?
+ 
+Answer:
+ If we have a DSL connection with a static IP then we can use the Apache web server to hostour website.
+
+4: While installing Apache HTTP server, do we need SSL and PHP support?
+ 
+Answer:
+ Yes, SSL and PHP support is required to install Apache HTTP server.
+
+5: What is virtual hosting?
+ 
+Answer:
+ Virtual hosting is a method for hosting multiple domain names on a server using a single IPaddress. Virtual hosting allows one server to share its resources, such as memory and processor cycles, in order to use its resources more efficiently.
+
+6: Is there any size limit for URL rewriting and aliasing in Apache web server?
+ 
+Answer:
+ Apache has no fixed limit on the numbers of Aliases and Redirects which may be declared inthe config files.
+
+7: Create a new user file and add a user with username "test" and password "test".
+ 
+Answer:
+htpasswd -c /usr/local/etc/httpd/users testUser will be prompted to provide the password. 
+The -c argument tells htpasswd to createnew file for users. 
+To add more users, -c argument can be omitted.
+
+In an Apache server, a "user file" refers to a file that stores user authentication information, typically used to manage access control for websites by defining usernames and passwords, allowing the Apache server to verify user identities when they try to access protected content; this file is often configured using the "htpasswd" command and is usually referenced within the Apache configuration file (httpd.conf) to specify where user data is stored. 
+Key points about user files in Apache:
+Function: They enable basic authentication on a website, where users need to provide their username and password to access specific pages. 
+File format: The user data within the file is usually encrypted for security purposes. 
+Configuration: The location of the user file is defined in the Apache configuration file, specifying which file to consult for user authentication. 
+
+
+
+8: You need to install Apache web server on Ubuntu server. How can you download andinstall the Apache2 package?
+ 
+Answer:
+ sudo apt-get install Apache2 OR sudo aptitude install Apache2 aptitude is known to sort out program dependencies in a better way.
+
+Installing Apache
+sudo apt update
+sudo apt install apache2
+
+check version 
+
+apache2 -v
+
+restart
+sudo service apache2 restart
+
+replace defult file
+/var/www/html/index.html
+
+The configuration system is fully documented in /usr/share/doc/apache2/README.Debian.gz
+
+Documentation for the web server itself can be found by accessing the manual if the 
+apache2-doc 
+package was installed on this server
+
+We can modify its default content in /var/www/html or 
+settings by editing its Virtual Host file found in /etc/apache2/sites-enabled/000-default.conf
+
+We can modify how Apache handles incoming requests and have multiple sites running on the same server by editing its Virtual Hosts file.
+
+So let’s start by creating a folder for our new website in /var/www/ by running
+
+sudo mkdir /var/www/gci/
+
+cd /var/www/gci/
+nano index.html
+
+Now let’s create a VirtualHost file so it’ll show up when we type in gci.example.com.
+
+Setting up the VirtualHost Configuration File
+
+We start this step by going into the configuration files directory:
+cd /etc/apache2/sites-available/
+
+Since Apache came with a default VirtualHost file, let’s use that as a base. (gci.conf is used here to match our subdomain name)
+
+sudo cp 000-default.conf gci.conf
+
+Now edit the configuration file:
+
+sudo nano gci.conf
+
+We should have our email in ServerAdmin so users can reach you in case Apache experiences any error:
+ServerAdmin yourname@example.com
+
+We also want the DocumentRoot directive to point to the directory our site files are hosted on:
+
+DocumentRoot /var/www/gci/
+
+The default file doesn’t come with a ServerName directive so we’ll have to add and define it by adding this line below the last directive:
+
+ServerName gci.example.com
+
+This ensures people reach the right site instead of the default one when they type in gci.example.com
+
+Activating VirtualHost file
+
+After setting up our website, we need to activate the virtual hosts configuration file to enable it. We do that by running the following command in the configuration file directory:
+
+
+sudo a2ensite gci.conf
+
+You should see the following output
+
+Enabling site gci.
+To activate the new configuration, you need to run:
+  service apache2 reload
+root@ubuntu-server:/etc/apache2/sites-available#
+
+systemctl reload apache2
+
+To load the new site, we restart Apache by typing:
+
+service apache2 reload
+
+
+Check running status
+systemctl status apache2
+
+In Linux, the hosts file is located at: /etc/hosts
+
+VirtualHost Examples
+
+<VirtualHost *:80>
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        #ServerName www.example.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
+	
+	##/var/log/apache2
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        # For most configuration files from conf-available/, which are
+        # enabled or disabled at a global level, it is possible to
+        # include a line for only one particular virtual host. For example the
+        # following line enables the CGI configuration for this host only
+        # after it has been globally disabled with "a2disconf".
+        #Include conf-available/serve-cgi-bin.conf
+</VirtualHost>
+
+
+
+
+
+APT (Advanced Packaging Tool) is a command-line tool that manages software packages in Ubuntu and other Debian-based Linux distributions. It's the default package manager for Ubuntu. 
+
+What does APT do? 
+Installs new software packages
+Upgrades existing software packages
+Updates the package list index
+Upgrades the entire Ubuntu system
+Automatically resolves dependencies
+Installs data permanently into the Ubuntu file system
+
+How do I use APT?
+Use the apt command to display all packages, installed packages, or upgradable packages 
+Use the apt-get command to install, remove, or update packages 
+Use the apt show command to display detailed information about a package 
+Use the apt autoremove command to remove unused dependencies 
+Use the APT pinning feature to force APT to choose particular versions of packages
+ 
+Why use APT? 
+APT is a popular option for installing, updating, and removing Linux software
+APT is widely used for system maintenance
+APT automatically handles dependencies
+
+
+
+logs in Linux
+
+/var/log
+Linux has a special directory for storing logs called /var/log . 
+This directory contains logs from the OS itself, services, and various applications running on the system.
+
+Common log files
+/var/log/syslog or /var/log/messages: Stores general system messages and metrics, including startup messages 
+/var/log/auth.log or /var/log/secure: Stores security-related events, such as logins and root user actions 
+/var/log/apache2: Stores logs generated by the Apache web server 
+/var/log/mysql: Stores logs generated by the MySQL database server 
+/var/log/mail: Stores logs generated by the mail server 
+/var/log/sshd: Stores logs generated by the SSH service 
+/var/log/cron: Stores all Crond-related messages, such as when the cron daemon initiated a job 
+
+
+logs for apache
+/var/log/apache2 or /var/log/httpd
+
+httpd: Hypertext Transfer Protocol daemon.
+
+The latest stable release of Apache is version 2.4.63
+
+9: What are Iptables?
+ 
+Answer:
+iptables is a command-line utility for configuring the built-in Linux kernel firewall. 
+It enables administrators to define chained rules that control incoming and outgoing network traffic.
+
+It uses tables that contain rules, called chains, to manage incoming and outgoing packets. 
+
+Tables
+Linux firewall iptables have four default tables that manage different rule chains:
+
+Filter. The default packet filtering table. It acts as a gatekeeper that decides which packets enter and leave a network.
+Network Address Translation (NAT). Contains NAT rules for routing packets to remote networks. It is used for packets that require alterations.
+Mangle. Adjusts the IP header properties of packets.
+Raw. Exempts packets from connection tracking.
+
+Chains
+Chains are rule lists within tables.
+The lists control how to handle packets at different processing stages. There are different chains, each with a specific purpose:
+
+INPUT. Handles incoming packets whose destination is a local application or service. The chain is in the filter and mangle tables.
+OUTPUT. Manages outgoing packets generated on a local application or service. All tables contain this chain.
+FORWARD. Works with packets that pass through the system from one network interface to another. The chain is in the filter, mangle, and security tables.
+PREROUTING. Alters packets before they are routed. The alteration happens before a routing decision. The NAT, mangle, and raw tables contain this chain.
+POSTROUTING. Alters packets after they are routed. The alteration happens after a routing decision. The NAT and mangle tables contain this chain.
+
+Iptables require root user privilege for execution
+
+https://phoenixnap.com/kb/iptables-linux
+
+UFW-Uncomplicated FireWall
+ufw is a front-end for netfilter/iptables, the Linux mechanism for routing and filtering internet traffic
+
+
+What are the types of virtual hosts ?
+name-based and IP-based.
+Name-based virtual host means that multiple names are running on each IP address.
+IP-based virtual host means that a different IP address exists for each website served. 
+Mostconfigurations are named-based because it only requires one IP address.
+
+
+How to restart Apache web server ?
+service apache2 restart
+
+Q: - How to check the version of Apache server ?
+apache2 -v
+
+Q: - What is meaning of "Listen" in httpd.conf file ?
+Port number on which to listen for nonsecure (http) transfers.
+
+Q: - What is DocumentRoot ?
+it is a location of files which are accessible by clients. 
+By default, the Apache HTTP server in Linux is configured to serve files from the /var/www/html/ directory.
+
+Q: - On which port Apache server works ?
+http - port 80
+https - port 443
+
+Q: - Tell me name of main configuration file of Apache server ?
+apache2.conf
+
+Q: - On which version of apache you have worked ?
+apache2 -v
+
+check memory
+free
+
+check disk free(df command for disk free)
+df -h (human readable format)
+
+check disk usage by directory/files
+du -h
+
+check disk size along with disk partitioning information
+sudo fdisk -l
+
+check kernel version or system information
+uname -a 
+uname -r
+
+check ubuntu version
+lsb_release -a
+
+check number of CPU
+nproc
+
+Monitor System Activity
+top
+
+process statsus
+ps -ef | grep apache2
+
+
+
+Check OS
+
+cat /etc/os-release
+
+Nohup, short for no hang up is a command in Linux systems that keep processes running even after exiting the shell or terminal.
+To run the application on Background
+
+nohup java -jar name.jar
+
+Add User:
+sudo adduser test1
+
+List users
+
+cat /etc/passwd
+getent passwd
+
+List Groups
+cat /etc/group
+getent group
+
+Lock and Unlock the password
+
+sudo passwd -l username
+sudo passwd -u username
+
+How to get UID/GID
+
+id
+
+
+How to change Uid/Gid
+
+sudo usermod -u <new_uid> <username> 
+sudo groupmod -g <new_gid> <group_name>
+
+After changing a user's UID or GID, you'll need to manually update the ownership of any files they own using the chown command.
+
+sudo chown -R root:root /home/username/
+
+
+How to Add User to Sudoers in Ubuntu? 5 ways
+
+Method 1: Using the usermod command
+sudo usermod -a -G sudo username 
+
+Method 2: Using the useradd command(To use this command the user should not exist in the system)
+sudo useradd -G sudo username
+
+Method 3: Using adduser command
+sudo adduser username sudo
+
+Method 4: Using gpasswd command(adding a member to the group)
+sudo gpasswd -a username sudo
+
+Method 5: using visudo command
+visudo is a special command used to edit the sudoers file. visudo edits the "/etc/sudoers" to provide a user sudo privilege.
+
+sudo visudo
+Add the below line to add the user as a privileged user in the sudoers file.
+username ALL=(ALL:ALL) ALL
+
+
+
+UFW-Uncomplicated FireWall
+ufw is a front-end for netfilter/iptables, the Linux mechanism for routing and filtering internet traffic
+
+The default firewall configuration tool for Ubuntu is ufw
+Developed to ease iptables firewall configuration, ufw provides a user-friendly way to create an IPv4 or IPv6 host-based firewall.
+
+ufw by default is initially disabled
+
+Enable or disable ufw
+
+sudo ufw enable
+sudo ufw disable
+
+To Check the ufw status
+
+sudo ufw status
+
+Open or close a port
+
+sudo ufw allow 22
+sudo ufw deny 22
+
+You can check which profiles are currently registered in UFW with:
+sudo ufw app list
+sudo ufw allow Apache
+Apache Full
+Apache Secure
+OpenSSH
+
+
+
+netstat -lntu
+sudo lsof -i :8080
+netstat -a | grep [8080]
+
+free -g ->checking the memory
+nproc ->checking number of cpu
+df -h ->check disk size
+top ->it shows all the memory and cpu and process
+
+telnet localhost 8080
+
+
+SSL Certificate process for Apache
+1.Need Private key(create using openssl)
+openssl genrsa -out server.key 2048
+
+2.CSR
+openssl req -new -key server.key -out server.csr
+enter the basic information
+3.
+
+
+use certbot to install the certificate 
+
+Networking commands
+
+1. IPCONFIG - Provides the IP Address,SubnetMask,DefaultGateway
+
+
+IPConfig /all - Provides primary output with additional information about network adapters.
+IPConfig /renew - Used to renew the system’s IP address.
+IPConfig /release - Removes the system’s current IP address.
+
+2. NSLOOKUP -we can access the information related to our system’s DNS server, i.e., domain name and IP address.
+
+3. HOSTNAME-The HOSTNAME command displays the hostname of the system.
+
+4. PING - to check the connectivity of our system to another host.
+
+5. TRACERT -command is used to trace the route during the transmission of the data packet over to the destination host and also provides us with the “hop” count during transmission. -default a maximum of 30 hops- 
+tracert /h 45 google.com
+
+6. NETSTAT - displays an overview of all the network connections in the device.
+
+7. ARP(Address Resolution Protocol)
+
+arp -a
+
+used to resolve IP address to MAC address
+the mac address is the physical address of the device
+device need the mac address for communication on a local area network
+devices use ARP to acquire the MAC address for a device
+An IP address is used to locate a device on a network
+A MAC address is what identifies the actual device
+
+If computer A want to communicate to B
+Will first look at its internal list, called an ARP cache
+
+arp -a
+
+The ARP cache stores IP Address to MAC address Associations
+
+2 different types of ARP entries: Dynamic and Static
+
+A dynamic entry is created automatically when a device sends out a broadcast message out on the network
+Dynamic entrie are not permanent. They are flushed out periodically
+
+A static entry is where someone manually enters an IP to MAC address association using the ARP command line utility
+
+arp -s 10.0.0.3 90-02-7b-c2-c0-67
+
+The Physical address is given as 6 hexadecimal bytes separated by hyphens. The entry is permanent.
+
+IF we know the IP address of the macine in the network, then we can get mac address using arp 
+
+
+ARP (Address Resolution Protocol) is used to translate IP addresses into MAC addresses, essentially finding a device's physical address on a network based on its logical IP address, while ICMP (Internet Control Message Protocol) is used to send error messages and status information about network connectivity, like checking if a device is reachable or measuring network latency; essentially, ARP is about finding a device's physical address, while ICMP is about communicating network status and errors. 
+
+Key points about ARP and ICMP:
+
+Function:
+ARP translates IP addresses to MAC addresses, whereas ICMP sends messages regarding network issues.
+ 
+When used:
+ARP is automatically used before sending data to a device to find its MAC address, while ICMP is used to diagnose network problems or send status updates.
+ 
+Example usage:
+When you try to ping a device, an ARP request is first sent to find the device's MAC address, then an ICMP echo request is sent to check if the device is reachable. 
+
+
+
+8. SYSTEMINFO -we can access the system’s hardware and software details, such as processor data, booting data, Windows version, etc
+
+9. GETMAC - it will dispaly mac address of the system
+
+10. NBTSTAT- details about NetBIOS over TCP/IP
+
+11. PATHPING - it not only traces the route but is also used to locate spots that have network loss and network latency.
+
+
+swap in linux
+paging in winows
+system Properties-->Advacned-->Performances Section click Settings-Advanced-->Virual Memory Section Click Change--> You can do Automatically manage paging file size for all drives or custom size
+
+
+Most Linux Commands
+
+Shell: It is a Linux interpreter which is used for executing commands.
+
+Kernel: Kernel is the core part of the operating system which is used to manage hardware and operations.
+
+kill -9 processkd  --forcefully kill 
+
+
+Hot tier - An online tier optimized for storing data that is accessed or modified frequently. The hot tier has the highest storage costs, but the lowest access costs.
+
+Cool tier - An online tier optimized for storing data that is infrequently accessed or modified. Data in the cool tier should be stored for a minimum of 30 days. The cool tier has lower storage costs and higher access costs compared to the hot tier.
+
+Cold tier - An online tier optimized for storing data that is rarely accessed or modified, but still requires fast retrieval. Data in the cold tier should be stored for a minimum of 90 days. The cold tier has lower storage costs and higher access costs compared to the cool tier.
+
+Archive tier - An offline tier optimized for storing data that is rarely accessed, and that has flexible latency requirements, on the order of hours. Data in the archive tier should be stored for a minimum of 180 days.
+
+1XX — Informational
+2XX — Success
+3XX — Redirection
+4XX — Client Error
+5XX — Server Error
+
+
+In Linux, a hard link is a copy of a file, while a soft link is a reference to a file. Hard links are useful for managing files within the same file system, while soft links are more flexible and can reference files across file systems. 
+Hard links
+A hard link is a duplicate of a file that shares the same inode. 
+A hard link points to a specific location on a hard drive. 
+Deleting the original file does not affect a hard link. 
+Hard links are efficient for managing files within the same file system. 
+Soft links
+A soft link, also known as a symbolic link, points to a file name, not the data. 
+A soft link is similar to a shortcut in Windows. 
+Deleting the original file renders a soft link inoperable. 
+Soft links are more flexible and can reference files across file systems. 
+Creating links 
+To create a hard link, use the ln command followed by the source and target files: ln source_file hard_link.
+To create a soft link, use the ln command with the -s option: ln -s source_file soft_link.
+
+
+
+
+
+ 
+

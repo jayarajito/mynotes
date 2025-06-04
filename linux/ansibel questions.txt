@@ -1,0 +1,15 @@
+What is the Ansible Galaxy?
+
+What is the Ansible Fact?
+
+Client will ask create a ansible custom module which will going to collect the server information from the remote server only cpu and memory this custom module need to collect only these 2 information, so write a custom module?
+
+how do you handle the ansible hierarchy?
+
+Write a same custome module in python script which will collect the system infor?
+
+How to call one python script to anotehr python script?
+
+Difference between Rescue Block and Always Block?
+
+What is dynamic inventory in Ansible
