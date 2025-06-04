@@ -1,0 +1,66 @@
+https://www.youtube.com/watch?v=PeENP0XO0FQ&list=PLrMP04WSdCjrkNYSFvFeiHrfpsSVDFMDR&index=15
+
+Advanced Scheduling in k8s
+
+Scheduler is responsible for schduing the pods and nodes
+
+Customize the Scheduler using
+nodeName
+nodeSelector
+Affinity
+Taints and Tolerations
+
+We can instruct to the scheduler to shedule the pods in perticular nodes
+
+nodeName:
+---------
+
+In the deployment yaml file you can define the nodeName: under template spec:
+you can define in Pod level
+
+nodeSelector:
+-------------
+In the node name all the pods will created on the same node. so this is not good practie for the high availability.
+
+
+you can add a labels for Nodes, label should be in key value pair
+
+kubectl label node nodename team=analytics
+
+Add the same label for another node
+
+kubectl label node nodename2 team=analytics
+
+Verify node labels
+
+kubectl get nodes --show-labels
+
+kubectl get nodes -l team=analytics
+
+use the this in yaml file
+nodeSelector:
+  team:analytics
+
+
+apply the yaml file
+
+now the pods will created in 2 nodes
+
+Affinity:
+---------
+This will schedule with advanced complex conditons with operator
+
+This is 2 types
+Node Affinity and Pod Affinity
+
+Node Affinity:
+This also 2 types
+soft:
+requiredDuringSchedulingIgnoredDuringExecution
+
+Hard:
+preferredDuringSchedulingIgnoredDuringExecution
+
+confusing so stoped, more compliated
+
+
